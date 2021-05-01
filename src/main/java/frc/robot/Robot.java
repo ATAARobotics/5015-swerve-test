@@ -6,13 +6,10 @@ public class Robot extends TimedRobot {
     // Create objects to run auto and teleop code
     public Teleop teleop = null;
     RobotMap robotMap = null;
-    SwerveDrive swerveDrive = null;
-    Gyro gyro = null;
 
     public Robot() {
         robotMap = new RobotMap();
         teleop = new Teleop(robotMap);
-        swerveDrive = robotMap.swerveDrive;
     }
 
     @Override
@@ -61,6 +58,6 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopPeriodic() {
-        teleop.TeleopPeriodic();
+        teleop.teleopPeriodic();
     }
 }

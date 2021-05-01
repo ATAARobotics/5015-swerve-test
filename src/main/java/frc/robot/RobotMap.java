@@ -1,5 +1,9 @@
 package frc.robot;
 
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+
+import edu.wpi.first.wpilibj.AnalogInput;
+
 /**
  * A centralized file that keeps track of all robot actuators and physical components
  */
@@ -7,34 +11,74 @@ package frc.robot;
 public class RobotMap {
 
     //Motors
-    /* private WPI_VictorSPX frontLeftMotor = new WPI_VictorSPX(2);
-    private WPI_TalonSRX rearLeftMotor = new WPI_TalonSRX(1);
-    private WPI_VictorSPX frontRightMotor = new WPI_VictorSPX(4);
-    private WPI_TalonSRX rearRightMotor = new WPI_TalonSRX(3);
-    private SpeedControllerGroup rightMotors = new SpeedControllerGroup(rearRightMotor, frontRightMotor); // Group
-    private SpeedControllerGroup leftMotors = new SpeedControllerGroup(rearLeftMotor, frontLeftMotor); // Group */
+    private WPI_TalonSRX frontLeftDriveMotor = new WPI_TalonSRX(0);
+    private WPI_TalonSRX frontRightDriveMotor = new WPI_TalonSRX(2);
+    private WPI_TalonSRX rearLeftDriveMotor = new WPI_TalonSRX(4);
+    private WPI_TalonSRX rearRightDriveMotor = new WPI_TalonSRX(6);
 
     //Encoders
+    private AnalogInput frontLeftRotationEncoder = new AnalogInput(0);
+    private AnalogInput frontRightRotationEncoder = new AnalogInput(1);
+    private AnalogInput rearLeftRotationEncoder = new AnalogInput(2);
+    private AnalogInput rearRightRotationEncoder = new AnalogInput(3);
 
-    // Gyro
-    private Gyro NavX = new Gyro();
-
-    // Controllers for specific actions on the robot, these classes should be
-    // accessed directly because they have nice interfaces
-    public SwerveDrive swerveDrive;
+    //Create subsystems
+    private Gyro navX = new Gyro();
+    private SwerveDrive swerveDrive = new SwerveDrive(this);
+    private Encoders encoders = new Encoders(this);
 
     public RobotMap() {
-
-        // Init submodules
-        swerveDrive = new SwerveDrive();
-
-        NavX.initializeNavX();
+        navX.initializeNavX();
     }
 
-    /**
-     * Returns the navx attached to the robot.
-     */
+    //Getter functions for hardware
+    public WPI_TalonSRX getDriveMotor(int moduleId) {
+        switch (moduleId) {
+            case 0:
+                return frontLeftDriveMotor;
+
+            case 1:
+                return frontRightDriveMotor;
+
+            case 2:
+                return rearLeftDriveMotor;
+
+            case 3:
+                return rearRightDriveMotor;
+
+            default:
+                System.err.println(moduleId + " is not a valid swerve module ID!");
+                return frontLeftDriveMotor;
+        }
+    }
+    public AnalogInput getRotationEncoder(int moduleId) {
+        switch (moduleId) {
+            case 0:
+                return frontLeftRotationEncoder;
+
+            case 1:
+                return frontRightRotationEncoder;
+
+            case 2:
+                return rearLeftRotationEncoder;
+
+            case 3:
+                return rearRightRotationEncoder;
+
+            default:
+                System.err.println(moduleId + " is not a valid swerve module ID!");
+                return frontLeftRotationEncoder;
+        }
+    }
+
+    //Getter functions for subsystems
     public Gyro getGyro() {
-        return NavX;
+        return navX;
+    }
+    public Encoders getEncoders() {
+        return encoders;
+    }
+    public SwerveDrive getSwerveDrive() {
+        return swerveDrive;
     }
 }
