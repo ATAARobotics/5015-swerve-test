@@ -1,6 +1,7 @@
 package frc.robot;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 /**
@@ -14,6 +15,11 @@ public class SwerveDrive {
     private WPI_TalonSRX frontRightDriveMotor;
     private WPI_TalonSRX rearLeftDriveMotor;
     private WPI_TalonSRX rearRightDriveMotor;
+
+    private VictorSPX frontLeftRotationMotor;
+    private VictorSPX frontRightRotationMotor;
+    private VictorSPX rearLeftRotationMotor;
+    private VictorSPX rearRightRotationMotor;
 
     public SwerveDrive(RobotMap robotMap) {
         this.frontLeftDriveMotor = robotMap.getDriveMotor(0);

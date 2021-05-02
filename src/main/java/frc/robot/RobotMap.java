@@ -1,5 +1,6 @@
 package frc.robot;
 
+import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import edu.wpi.first.wpilibj.AnalogInput;
@@ -15,6 +16,11 @@ public class RobotMap {
     private WPI_TalonSRX frontRightDriveMotor = new WPI_TalonSRX(2);
     private WPI_TalonSRX rearLeftDriveMotor = new WPI_TalonSRX(4);
     private WPI_TalonSRX rearRightDriveMotor = new WPI_TalonSRX(6);
+
+    private VictorSPX frontLeftRotationMotor = new VictorSPX(1);
+    private VictorSPX frontRightRotationMotor = new VictorSPX(3);
+    private VictorSPX rearLeftRotationMotor = new VictorSPX(5);
+    private VictorSPX rearRightRotationMotor = new VictorSPX(7);
 
     //Encoders
     private AnalogInput frontLeftRotationEncoder = new AnalogInput(0);
@@ -49,6 +55,25 @@ public class RobotMap {
             default:
                 System.err.println(moduleId + " is not a valid swerve module ID!");
                 return frontLeftDriveMotor;
+        }
+    }
+    public VictorSPX getRotationMotor(int moduleId) {
+        switch (moduleId) {
+            case 0:
+                return frontLeftRotationMotor;
+
+            case 1:
+                return frontRightRotationMotor;
+
+            case 2:
+                return rearLeftRotationMotor;
+
+            case 3:
+                return rearRightRotationMotor;
+
+            default:
+                System.err.println(moduleId + " is not a valid swerve module ID!");
+                return frontLeftRotationMotor;
         }
     }
     public AnalogInput getRotationEncoder(int moduleId) {
