@@ -23,8 +23,13 @@ public class SwerveDrive {
 
     public SwerveDrive(RobotMap robotMap) {
         this.frontLeftDriveMotor = robotMap.getDriveMotor(0);
-        this.frontRightDriveMotor = robotMap.getDriveMotor(0);
-        this.rearLeftDriveMotor = robotMap.getDriveMotor(0);
-        this.rearRightDriveMotor = robotMap.getDriveMotor(0);
+        this.frontRightDriveMotor = robotMap.getDriveMotor(1);
+        this.rearLeftDriveMotor = robotMap.getDriveMotor(2);
+        this.rearRightDriveMotor = robotMap.getDriveMotor(3);
+
+        this.frontLeftRotationMotor = robotMap.getRotationMotor(0);
+        this.frontRightRotationMotor = robotMap.getRotationMotor(1);
+        this.rearLeftRotationMotor = robotMap.getRotationMotor(2);
+        this.rearRightRotationMotor = robotMap.getRotationMotor(3);
     }
 }
