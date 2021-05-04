@@ -23,7 +23,10 @@ public class Teleop {
         //Print debugging values to SmartDashboard
         SmartDashboard.putNumber("Gyro Value", gyro.getAngle());
 
-        swerveDrive.periodic();
+        //Run periodic tasks on the swerve drive, setting the speed and rotation
+
+        //TODO Figure out what units these values are in
+        swerveDrive.periodic(new SwerveCommand(0.0, 0.0, 0.0));
 
         joysticks.checkInputs();
     }

@@ -5,7 +5,6 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.controller.PIDController;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpiutil.math.MathUtil;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
@@ -18,9 +17,10 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
  */
 public class SwerveModule {
     
-    //Restrictions on the maximum speed of the motors (0 to 1)
+    //Restrictions on the minimum and maximum speed of the motors (0 to 1)
     private double maxDriveSpeed = 0.7;
     private double maxRotationSpeed = 1.0;
+    private double minRotationSpeed = 0.03;
 
     private WPI_TalonSRX driveMotor;
     private VictorSPX rotationMotor;
@@ -31,6 +31,9 @@ public class SwerveModule {
 
     //The right-hand modules have their wheels facing the other way, so we need to invert their direction
     private double inversionConstant = 1;
+
+    //The ID number of the module
+    private int id = -1;
 
     //The name of the module - not used for much other than debugging
     private String name = "Unknown";
@@ -74,8 +77,15 @@ public class SwerveModule {
         //Set the drive speed based on the driveSpeed variable (0 to 1)
         driveMotor.set(ControlMode.PercentOutput, driveSpeed);
 
+        //Get the rotation speed
+        double rotationSpeed = -angleController.calculate(getAngle());
+        rotationSpeed = MathUtil.clamp(rotationSpeed, -maxRotationSpeed, maxRotationSpeed);
+        if (rotationSpeed > -minRotationSpeed && rotationSpeed < minRotationSpeed) {
+            rotationSpeed = 0;
+        }
+
         //Set the rotation motor speed based on the next value from the angle PID, clamped to not exceed the maximum speed
-        rotationMotor.set(ControlMode.PercentOutput, MathUtil.clamp(-angleController.calculate(getAngle()), -maxRotationSpeed, maxRotationSpeed));
+        rotationMotor.set(ControlMode.PercentOutput, rotationSpeed);
     }
 
     /**
@@ -123,6 +133,20 @@ public class SwerveModule {
      */
     public double getTargetAngle() {
         return angleController.getSetpoint();
+    }
+
+    /**
+     * Set the id of the module
+     */
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    /**
+     * Get the id of the module
+     */
+    public int getId() {
+        return this.id;
     }
 
     /**

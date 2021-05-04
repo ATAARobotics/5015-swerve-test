@@ -6,6 +6,9 @@ package frc.robot;
 
 public class RobotMap {
 
+    public static final double WHEELBASE = 25.75;
+    public static final double TRACK_WIDTH = 21.0;
+
     public static final int FRONT_LEFT_DRIVE_MOTOR = 0;
     public static final int FRONT_RIGHT_DRIVE_MOTOR = 2;
     public static final int REAR_LEFT_DRIVE_MOTOR = 4;
