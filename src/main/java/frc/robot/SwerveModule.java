@@ -5,6 +5,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.controller.PIDController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpiutil.math.MathUtil;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
@@ -28,6 +29,9 @@ public class SwerveModule {
     //The rotation encoders all have their zero position in a different place, so keep track of how far off zero is from straight ahead
     private double rotationOffset;
 
+    //The right-hand modules have their wheels facing the other way, so we need to invert their direction
+    private double inversionConstant = 1;
+
     //The name of the module - not used for much other than debugging
     private String name = "Unknown";
 
@@ -35,7 +39,7 @@ public class SwerveModule {
     private double driveSpeed = 0.0;
 
     //Create a PID for controlling the angle of the module
-    private PIDController angleController = new PIDController(0.05, 0.0, 0.001);
+    private PIDController angleController = new PIDController(0.7, 0.0, 0.001);
 
     /**
      * Creates a swerve module with the given hardware
@@ -44,19 +48,23 @@ public class SwerveModule {
      * @param rotationMotor The Victor SPX that rotates the wheel
      * @param rotationEncoder The input from the encoder. The cable for this MUST be in an "Analog In" port on the roboRIO
      * @param rotationOffset The distance from zero that forward is on the encoder
+     * @param invertDrive Whether to invert the direction of the wheel
      */
-    public SwerveModule(WPI_TalonSRX driveMotor, VictorSPX rotationMotor, AnalogInput rotationEncoder, double rotationOffset) {
+    public SwerveModule(WPI_TalonSRX driveMotor, VictorSPX rotationMotor, AnalogInput rotationEncoder, double rotationOffset, boolean invertDrive) {
         this.driveMotor = driveMotor;
         this.rotationMotor = rotationMotor;
         this.rotationEncoder = rotationEncoder;
         this.rotationOffset = rotationOffset;
+        if (invertDrive) {
+            this.inversionConstant = -1.0;
+        }
 
         //Set up the encoder from the drive motor
         this.driveMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
         this.driveMotor.setSelectedSensorPosition(0);
 
         //Because the rotation is on a circle, not a line, we want to take the shortest route to the setpoint - this function tells the PID it is on a circle from 0 to 2*Pi
-        angleController.enableContinuousInput(0.0, 2.0 * Math.PI);
+        angleController.enableContinuousInput(-Math.PI, Math.PI);
     }
 
     /**
@@ -67,7 +75,7 @@ public class SwerveModule {
         driveMotor.set(ControlMode.PercentOutput, driveSpeed);
 
         //Set the rotation motor speed based on the next value from the angle PID, clamped to not exceed the maximum speed
-        rotationMotor.set(ControlMode.PercentOutput, MathUtil.clamp(angleController.calculate(getAngle()), -maxRotationSpeed, maxRotationSpeed));
+        rotationMotor.set(ControlMode.PercentOutput, MathUtil.clamp(-angleController.calculate(getAngle()), -maxRotationSpeed, maxRotationSpeed));
     }
 
     /**
@@ -76,7 +84,7 @@ public class SwerveModule {
      * @param speed The speed to drive the module. This value will be clamped to not exceed the maximum motor speed
      */
     public void setDriveSpeed(double speed) {
-        this.driveSpeed = MathUtil.clamp(speed, -maxDriveSpeed, maxDriveSpeed);
+        this.driveSpeed = MathUtil.clamp(speed, -maxDriveSpeed, maxDriveSpeed) * inversionConstant;
     }
 
     /**
@@ -105,6 +113,7 @@ public class SwerveModule {
         if (angle < 0.0) {
             angle += 2.0 * Math.PI;
         }
+        angle -= Math.PI;
 
         return angle;
     }
