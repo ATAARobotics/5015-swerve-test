@@ -4,8 +4,8 @@ import edu.wpi.first.wpilibj.*;
 
 public class Robot extends TimedRobot {
     // Create objects to run auto and teleop code
-    public Teleop teleop = null;
     RobotMap robotMap = null;
+    public Teleop teleop = null;
 
     public Robot() {
         robotMap = new RobotMap();
