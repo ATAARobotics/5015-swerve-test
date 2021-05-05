@@ -5,11 +5,16 @@ import edu.wpi.first.wpilibj.*;
 public class Robot extends TimedRobot {
     // Create objects to run auto and teleop code
     RobotMap robotMap = null;
+    private Gyro gyro = null;
+    private SwerveDrive swerveDrive = null;
     public Teleop teleop = null;
 
     public Robot() {
         robotMap = new RobotMap();
-        teleop = new Teleop(robotMap);
+        gyro = new Gyro();
+        gyro.initializeNavX();
+        swerveDrive = new SwerveDrive(robotMap, gyro);
+        teleop = new Teleop(swerveDrive);
     }
 
     @Override

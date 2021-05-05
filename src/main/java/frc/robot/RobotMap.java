@@ -1,11 +1,9 @@
 package frc.robot;
 
 /**
- * A centralized file that keeps track of all robot actuators and physical components
+ * A centralized file that keeps track of constants of the robot, such as motor ports and robot dimensions
  */
-
 public class RobotMap {
-
     public static final double WHEELBASE = 25.75;
     public static final double TRACK_WIDTH = 21.0;
 
@@ -23,20 +21,4 @@ public class RobotMap {
     public static final int FRONT_RIGHT_ROTATION_ENCODER = 1;
     public static final int REAR_LEFT_ROTATION_ENCODER = 2;
     public static final int REAR_RIGHT_ROTATION_ENCODER = 3;
-
-    //Create subsystems
-    private Gyro navX = new Gyro();
-    private SwerveDrive swerveDrive = new SwerveDrive(this);
-
-    public RobotMap() {
-        navX.initializeNavX();
-    }
-
-    //Getter functions for subsystems
-    public Gyro getGyro() {
-        return navX;
-    }
-    public SwerveDrive getSwerveDrive() {
-        return swerveDrive;
-    }
 }

@@ -115,11 +115,11 @@ public class SwerveModule {
     }
 
     /**
-     * Gets the angle in radians of the module from 0 to 2*Pi
+     * Gets the angle in radians of the module from -Pi to Pi
      */
     public double getAngle() {
         double angle = ((rotationEncoder.getVoltage() / RobotController.getVoltage5V()) * 2.0 * Math.PI) + rotationOffset;
-        angle %= 2 * Math.PI;
+        angle %= 2.0 * Math.PI;
         if (angle < 0.0) {
             angle += 2.0 * Math.PI;
         }
