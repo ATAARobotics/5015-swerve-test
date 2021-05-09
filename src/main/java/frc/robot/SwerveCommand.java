@@ -5,7 +5,7 @@ public class SwerveCommand {
     private double[] speeds;
     private double[] angles;
 
-    public SwerveCommand(double speedVertical, double speedHorizontal, double speedRotation) {
+    public SwerveCommand(double speedHorizontal, double speedVertical, double speedRotation) {
 
         double wheelbase = RobotMap.WHEELBASE;
         double trackWidth = RobotMap.TRACK_WIDTH;

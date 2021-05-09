@@ -15,10 +15,11 @@ public class Teleop {
     }
 
     public void teleopPeriodic() {
+        //Update inputs from the controller
+        joysticks.checkInputs();
+
         //Run periodic tasks on the swerve drive, setting the speed and rotation
         //TODO Figure out what units these values are in
-        swerveDrive.periodic(new SwerveCommand(0.0, 0.0, 0.0));
-
-        joysticks.checkInputs();
+        swerveDrive.periodic(new SwerveCommand(joysticks.getXSpeed(), joysticks.getYSpeed(), joysticks.getRSpeed()));
     }
 }
