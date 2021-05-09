@@ -79,6 +79,7 @@ public class SwerveModule {
 
         //Get the rotation speed
         double rotationSpeed = -angleController.calculate(getAngle());
+        //Clamp the value (not scale because faster is okay, it's on a PID)
         rotationSpeed = MathUtil.clamp(rotationSpeed, -maxRotationSpeed, maxRotationSpeed);
         if (rotationSpeed > -minRotationSpeed && rotationSpeed < minRotationSpeed) {
             rotationSpeed = 0;
@@ -91,10 +92,10 @@ public class SwerveModule {
     /**
      * Sets the speed to drive the module
      * 
-     * @param speed The speed to drive the module. This value will be clamped to not exceed the maximum motor speed
+     * @param speed The speed to drive the module. This value will be scaled to not exceed the maximum motor speed
      */
     public void setDriveSpeed(double speed) {
-        this.driveSpeed = MathUtil.clamp(speed, -maxDriveSpeed, maxDriveSpeed) * inversionConstant;
+        this.driveSpeed = speed / maxDriveSpeed * inversionConstant;
     }
 
     /**

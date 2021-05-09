@@ -10,6 +10,9 @@ public class SwerveCommand {
         double wheelbase = RobotMap.WHEELBASE;
         double trackWidth = RobotMap.TRACK_WIDTH;
 
+        //Find the maximum possible speed that should be given to a wheel
+        double maxExpected = Math.sqrt(Math.pow(1 - 1 * Math.min(wheelbase, trackWidth) / 2, 2) + Math.pow(1 + 1 * Math.max(wheelbase, trackWidth) / 2, 2));
+
         //Calculate wheel speeds and angles
         double a,b,c,d;
         
@@ -19,10 +22,11 @@ public class SwerveCommand {
         d = speedVertical + speedRotation * trackWidth / 2;
 
         speeds = new double[]{
-            Math.sqrt(Math.pow(b, 2) + Math.pow(d, 2)),
-            Math.sqrt(Math.pow(b, 2) + Math.pow(c, 2)),
-            Math.sqrt(Math.pow(a, 2) + Math.pow(d, 2)),
-            Math.sqrt(Math.pow(a, 2) + Math.pow(c, 2))
+            //Divide by the max expected speed to make the speeds scale correctly
+            Math.sqrt(Math.pow(b, 2) + Math.pow(d, 2)) / maxExpected,
+            Math.sqrt(Math.pow(b, 2) + Math.pow(c, 2)) / maxExpected,
+            Math.sqrt(Math.pow(a, 2) + Math.pow(d, 2)) / maxExpected,
+            Math.sqrt(Math.pow(a, 2) + Math.pow(c, 2)) / maxExpected
         };
         angles = new double[]{
             Math.atan2(b, d),
