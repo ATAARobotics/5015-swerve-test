@@ -8,6 +8,7 @@ public class Teleop {
     public Teleop(SwerveDrive swerveDrive) {
         // Initialize Classes
         this.joysticks = new OI();
+        this.swerveDrive = swerveDrive;
     }
 
     public void teleopInit() {
@@ -20,6 +21,6 @@ public class Teleop {
 
         //Run periodic tasks on the swerve drive, setting the speed and rotation
         //TODO Figure out what units these values are in
-        swerveDrive.periodic(new SwerveCommand(joysticks.getXSpeed(), joysticks.getYSpeed(), joysticks.getRSpeed()));
+        swerveDrive.periodic(new SwerveCommand(joysticks.getXSpeed(), joysticks.getYSpeed(), joysticks.getRSpeed() / 10));
     }
 }
