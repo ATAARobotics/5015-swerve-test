@@ -30,7 +30,7 @@ public class SwerveModule {
     private double rotationOffset;
 
     //The right-hand modules have their wheels facing the other way, so we need to invert their direction
-    private double inversionConstant = 1;
+    private double inversionConstant = 1.0;
 
     //The ID number of the module
     private int id = -1;
@@ -40,6 +40,7 @@ public class SwerveModule {
 
     //The speed (-1 to 1) to run the motor
     private double driveSpeed = 0.0;
+    private double reverseMultiplier = 1.0;
 
     //Create a PID for controlling the angle of the module
     private PIDController angleController = new PIDController(0.7, 0.0, 0.001);
@@ -82,11 +83,14 @@ public class SwerveModule {
         //Clamp the value (not scale because faster is okay, it's on a PID)
         rotationSpeed = MathUtil.clamp(rotationSpeed, -maxRotationSpeed, maxRotationSpeed);
         if (rotationSpeed > -minRotationSpeed && rotationSpeed < minRotationSpeed) {
-            rotationSpeed = 0;
+            rotationSpeed = 0.0;
         }
 
-        //Set the rotation motor speed based on the next value from the angle PID, clamped to not exceed the maximum speed
-        rotationMotor.set(ControlMode.PercentOutput, rotationSpeed);
+        //If the robot isn't moving at all, don't rotate the module
+        if (driveSpeed != 0.0) {
+            //Set the rotation motor speed based on the next value from the angle PID, clamped to not exceed the maximum speed
+            rotationMotor.set(ControlMode.PercentOutput, rotationSpeed);
+        }
     }
 
     /**
@@ -95,7 +99,7 @@ public class SwerveModule {
      * @param speed The speed to drive the module. This value will be scaled to not exceed the maximum motor speed
      */
     public void setDriveSpeed(double speed) {
-        this.driveSpeed = speed / maxDriveSpeed * inversionConstant;
+        this.driveSpeed = speed / maxDriveSpeed * inversionConstant * reverseMultiplier;
     }
 
     /**
@@ -104,7 +108,21 @@ public class SwerveModule {
      * @param angle The angle to try to reach. This value should be between 0 and 2*Pi
      */
     public void setTargetAngle(double angle) {
-        angleController.setSetpoint(angle);
+        double currentAngle = getAngle();
+        angle += 2.0 * Math.PI;
+        angle %= 2.0 * Math.PI;
+        currentAngle += 2.0 * Math.PI;
+        currentAngle %= 2.0 * Math.PI;
+
+        if (Math.abs(angle - currentAngle) > Math.PI / 2.0 && Math.min(angle, Math.abs(2.0 * Math.PI - angle)) + Math.min(currentAngle, Math.abs(2.0 * Math.PI - currentAngle)) > Math.PI / 2.0) {
+            angle += Math.PI;
+            angle %= 2.0 * Math.PI;
+            reverseMultiplier = -1.0;
+        } else {
+            reverseMultiplier = 1.0;
+        }
+
+        angleController.setSetpoint(angle - Math.PI);
     }
 
     /**

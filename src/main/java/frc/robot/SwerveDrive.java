@@ -1,3 +1,7 @@
+//TODO Make wheel speeds the same
+//TODO Test field oriented
+//TODO Test no spinning to 0
+
 package frc.robot;
 
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
