@@ -17,6 +17,9 @@ class OI {
         xSpeed = driveStick.getX(Hand.kLeft);
         ySpeed = driveStick.getY(Hand.kLeft);
         rSpeed = driveStick.getX(Hand.kRight);
+        if (xSpeed < 0.3 && xSpeed > -0.3) { xSpeed = 0; }
+        if (ySpeed < 0.3 && ySpeed > -0.3) { ySpeed = 0; }
+        if (rSpeed < 0.3 && rSpeed > -0.3) { rSpeed = 0; }
     }
 
     //Getter functions for controls

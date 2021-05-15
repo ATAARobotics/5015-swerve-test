@@ -18,8 +18,8 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 public class SwerveModule {
     
     //Restrictions on the minimum and maximum speed of the motors (0 to 1)
-    private double maxDriveSpeed = 0.7;
-    private double maxRotationSpeed = 1.0;
+    private double maxDriveSpeed = 0.4;
+    private double maxRotationSpeed = 0.4;
     private double minRotationSpeed = 0.03;
 
     private WPI_TalonSRX driveMotor;
