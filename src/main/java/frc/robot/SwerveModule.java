@@ -90,6 +90,8 @@ public class SwerveModule {
         if (driveSpeed != 0.0) {
             //Set the rotation motor speed based on the next value from the angle PID, clamped to not exceed the maximum speed
             rotationMotor.set(ControlMode.PercentOutput, rotationSpeed);
+        } else {
+            rotationMotor.set(ControlMode.PercentOutput, 0.0);
         }
     }
 
@@ -109,12 +111,9 @@ public class SwerveModule {
      */
     public void setTargetAngle(double angle) {
         double currentAngle = getAngle();
-        angle += 2.0 * Math.PI;
-        angle %= 2.0 * Math.PI;
-        currentAngle += 2.0 * Math.PI;
-        currentAngle %= 2.0 * Math.PI;
 
-        if (Math.abs(angle - currentAngle) > Math.PI / 2.0 && Math.min(angle, Math.abs(2.0 * Math.PI - angle)) + Math.min(currentAngle, Math.abs(2.0 * Math.PI - currentAngle)) > Math.PI / 2.0) {
+        //If the smallest angle between the current angle and the target is greater than Pi/2, flip the speed, not the wheel
+        if (Math.abs(Math.atan2(Math.sin(angle - currentAngle), Math.cos(angle - currentAngle))) > Math.PI / 2.0) {            
             angle += Math.PI;
             angle %= 2.0 * Math.PI;
             reverseMultiplier = -1.0;
@@ -122,7 +121,7 @@ public class SwerveModule {
             reverseMultiplier = 1.0;
         }
 
-        angleController.setSetpoint(angle - Math.PI);
+        angleController.setSetpoint(angle);
     }
 
     /**

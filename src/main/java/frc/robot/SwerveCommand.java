@@ -1,5 +1,3 @@
-//TODO Reverse power instead of flipping
-
 package frc.robot;
 
 public class SwerveCommand {
