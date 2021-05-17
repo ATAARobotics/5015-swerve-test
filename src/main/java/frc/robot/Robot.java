@@ -1,19 +1,28 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.*;
+import edu.wpi.first.wpilibj.geometry.Pose2d;
+import edu.wpi.first.wpilibj.geometry.Rotation2d;
 
 public class Robot extends TimedRobot {
-    // Create objects to run auto and teleop code
-    RobotMap robotMap = null;
+    //Create hardware objects
     private Gyro gyro = null;
     private SwerveDrive swerveDrive = null;
+
+    // Create objects to run auto and teleop code
+    public Auto auto = null;
     public Teleop teleop = null;
 
+    public Pose2d initialPose = new Pose2d(0.0, 0.0, new Rotation2d(0));
+
     public Robot() {
-        robotMap = new RobotMap();
+        //Hardware-based objects
         gyro = new Gyro();
         gyro.initializeNavX();
-        swerveDrive = new SwerveDrive(robotMap, gyro);
+        swerveDrive = new SwerveDrive(gyro, initialPose);
+
+        //Controller objects
+        auto = new Auto(swerveDrive);
         teleop = new Teleop(swerveDrive);
     }
 
@@ -48,12 +57,12 @@ public class Robot extends TimedRobot {
 
     @Override
     public void autonomousInit() {
-        
+        auto.autoInit();
     }
 
     @Override
     public void autonomousPeriodic() {
-
+        auto.autoPeriodic();
     }
 
     @Override

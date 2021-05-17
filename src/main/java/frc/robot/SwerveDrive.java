@@ -1,17 +1,14 @@
-//TODO Make wheel speeds the same
+
 
 package frc.robot;
 
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-/**
- * Manages a swerve drive
- * 
- * @author Jacob Guglielmin
- */
 public class SwerveDrive {
 
     private Gyro gyro;
@@ -22,7 +19,19 @@ public class SwerveDrive {
     //An array of all the modules on the swerve drive
     private SwerveModule[] swerveModules;
 
-    public SwerveDrive(RobotMap robotMap, Gyro gyro) {
+    //The odometry for the swerve drive
+    private SwerveOdometry odometry;
+
+    //The current pose of the robot
+    private Pose2d pose;
+
+    /**
+     * Set up the swerve drive
+     * 
+     * @param gyro The gyro object running on the robot
+     * @param initialPose The initial pose that the robot is in
+     */
+    public SwerveDrive(Gyro gyro, Pose2d initialPose) {
         this.gyro = gyro;
 
         //Initialize four swerve modules using the SwerveModule class
@@ -46,18 +55,26 @@ public class SwerveDrive {
             rearLeftModule,
             rearRightModule
         };
+
+        //Set up odometry
+        odometry = new SwerveOdometry(initialPose);
+
+        //Initialize the pose
+        pose = initialPose;
     }
 
     /**
-     * This function should be run every telopPeriodic
+     * This function should be run during every teleop and auto periodic
      */
     public void periodic(SwerveCommand command) {
         SmartDashboard.putNumber("Gyro Value", gyro.getAngle());
 
         //Execute functions on each swerve module
         for (SwerveModule module : swerveModules) {
-            //Do the math to get the speed and angle of the module, and set the speed and angle target accordingly
-            module.setDriveSpeed(command.getModuleSpeed(module.getId()));
+            //Set the drive velocity in meters/second for the module
+            module.setDriveVelocity(command.getModuleVelocity(module.getId()));
+
+            //Set the angle of the module
             if (fieldOriented) {
                 //Subtract the current heading of the robot from the desired angle to determine the actual angle required
                 double angle = command.getModuleAngle(module.getId()) - gyro.getAngle();
@@ -84,6 +101,9 @@ public class SwerveDrive {
             //Run periodic tasks on the module (running motors)
             module.periodic();
         }
+
+        //Update the current pose with the latest command, angle, and a timestamp
+        pose = odometry.update(command, gyro.getAngle(), Timer.getFPGATimestamp());
     }
 
     /**
@@ -91,5 +111,12 @@ public class SwerveDrive {
      */
     public void setFieldOriented(boolean fieldOriented) {
         this.fieldOriented = fieldOriented;
+    }
+
+    /**
+     * Gets the current pose of the robot
+     */
+    public Pose2d getPose() {
+        return pose;
     }
 }

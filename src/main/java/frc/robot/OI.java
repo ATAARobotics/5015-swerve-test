@@ -4,9 +4,9 @@ import edu.wpi.first.wpilibj.GenericHID.Hand;
 class OI {
 
     private XboxController driveStick = new XboxController(0);
-    private double xSpeed;
-    private double ySpeed;
-    private double rSpeed;
+    private double xVelocity;
+    private double yVelocity;
+    private double rVelocity;
 
     public OI() {
         
@@ -14,22 +14,22 @@ class OI {
 
     //periodic function to update controller input
     public void checkInputs() {
-        xSpeed = driveStick.getX(Hand.kLeft);
-        ySpeed = driveStick.getY(Hand.kLeft);
-        rSpeed = driveStick.getX(Hand.kRight);
-        if (xSpeed < 0.3 && xSpeed > -0.3) { xSpeed = 0; }
-        if (ySpeed < 0.3 && ySpeed > -0.3) { ySpeed = 0; }
-        if (rSpeed < 0.3 && rSpeed > -0.3) { rSpeed = 0; }
+        xVelocity = driveStick.getX(Hand.kLeft);
+        yVelocity = driveStick.getY(Hand.kLeft);
+        rVelocity = driveStick.getX(Hand.kRight);
+        if (xVelocity < 0.3 && xVelocity > -0.3) { xVelocity = 0; }
+        if (yVelocity < 0.3 && yVelocity > -0.3) { yVelocity = 0; }
+        if (rVelocity < 0.3 && rVelocity > -0.3) { rVelocity = 0; }
     }
 
     //Getter functions for controls
-    public double getXSpeed() {
-        return xSpeed;
+    public double getXVelocity() {
+        return xVelocity;
     }
-    public double getYSpeed() {
-        return ySpeed;
+    public double getYVelocity() {
+        return yVelocity;
     }
-    public double getRSpeed() {
-        return rSpeed;
+    public double getRVelocity() {
+        return rVelocity;
     }
 }

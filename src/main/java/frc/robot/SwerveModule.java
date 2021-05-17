@@ -10,15 +10,9 @@ import edu.wpi.first.wpiutil.math.MathUtil;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 
-/**
- * A single swerve module on a swerve drive.
- * 
- * @author Jacob Guglielmin
- */
 public class SwerveModule {
     
-    //Restrictions on the minimum and maximum speed of the motors (0 to 1)
-    private double maxDriveSpeed = 0.4;
+    //Restrictions on the minimum and maximum speed of the rotation motors (0 to 1)
     private double maxRotationSpeed = 0.4;
     private double minRotationSpeed = 0.03;
 
@@ -38,12 +32,15 @@ public class SwerveModule {
     //The name of the module - not used for much other than debugging
     private String name = "Unknown";
 
-    //The speed (-1 to 1) to run the motor
-    private double driveSpeed = 0.0;
+    //The velocity (-1 to 1) to run the motor
+    private double driveVelocity = 0.0;
     private double reverseMultiplier = 1.0;
 
     //Create a PID for controlling the angle of the module
     private PIDController angleController = new PIDController(0.7, 0.0, 0.001);
+
+    //Create a PID for controlling the velocity of the module
+    private PIDController velocityController = new PIDController(0.7, 0.0, 0.001);
 
     /**
      * Creates a swerve module with the given hardware
@@ -75,33 +72,34 @@ public class SwerveModule {
      * This function should run every teleopPeriodic
      */
     public void periodic() {
-        //Set the drive speed based on the driveSpeed variable (0 to 1)
-        driveMotor.set(ControlMode.PercentOutput, driveSpeed);
+        //Set the drive velocity, clamped to not exceed the maximum safe speed
+        driveMotor.set(ControlMode.PercentOutput, MathUtil.clamp(velocityController.calculate(getVelocity()), -RobotMap.MAX_SAFE_SPEED_OVERRIDE, RobotMap.MAX_SAFE_SPEED_OVERRIDE));
 
-        //Get the rotation speed
-        double rotationSpeed = -angleController.calculate(getAngle());
+        //Get the rotation velocity
+        double rotationVelocity = -angleController.calculate(getAngle());
         //Clamp the value (not scale because faster is okay, it's on a PID)
-        rotationSpeed = MathUtil.clamp(rotationSpeed, -maxRotationSpeed, maxRotationSpeed);
-        if (rotationSpeed > -minRotationSpeed && rotationSpeed < minRotationSpeed) {
-            rotationSpeed = 0.0;
+        rotationVelocity = MathUtil.clamp(rotationVelocity, -maxRotationSpeed, maxRotationSpeed);
+        if (rotationVelocity > -minRotationSpeed && rotationVelocity < minRotationSpeed) {
+            rotationVelocity = 0.0;
         }
 
         //If the robot isn't moving at all, don't rotate the module
-        if (driveSpeed != 0.0) {
-            //Set the rotation motor speed based on the next value from the angle PID, clamped to not exceed the maximum speed
-            rotationMotor.set(ControlMode.PercentOutput, rotationSpeed);
+        if (driveVelocity != 0.0) {
+            //Set the rotation motor velocity based on the next value from the angle PID, clamped to not exceed the maximum speed
+            rotationMotor.set(ControlMode.PercentOutput, rotationVelocity);
         } else {
             rotationMotor.set(ControlMode.PercentOutput, 0.0);
         }
     }
 
     /**
-     * Sets the speed to drive the module
+     * Sets the velocity to drive the module in meters/second.
+     * This can exceed the maximum velocity specified in RobotMap.
      * 
-     * @param speed The speed to drive the module. This value will be scaled to not exceed the maximum motor speed
+     * @param velocity The velocity to drive the module. 
      */
-    public void setDriveSpeed(double speed) {
-        this.driveSpeed = speed / maxDriveSpeed * inversionConstant * reverseMultiplier;
+    public void setDriveVelocity(double velocity) {
+        velocityController.setSetpoint(velocity * inversionConstant * reverseMultiplier);
     }
 
     /**
@@ -112,7 +110,7 @@ public class SwerveModule {
     public void setTargetAngle(double angle) {
         double currentAngle = getAngle();
 
-        //If the smallest angle between the current angle and the target is greater than Pi/2, flip the speed, not the wheel
+        //If the smallest angle between the current angle and the target is greater than Pi/2, invert the velocity, not the wheel
         if (Math.abs(Math.atan2(Math.sin(angle - currentAngle), Math.cos(angle - currentAngle))) > Math.PI / 2.0) {            
             angle += Math.PI;
             angle %= 2.0 * Math.PI;
@@ -126,10 +124,35 @@ public class SwerveModule {
 
     /**
      * Get the distance that the drive wheel has turned
+     * 
+     * @param rawTicks Whether the output should be in raw encoder ticks instead of meters
      */
-    public double getDistance() {
-        //TODO Make this actually distance with ticks per inch
-        return driveMotor.getSelectedSensorPosition();
+    public double getDistance(boolean rawTicks) {
+        //Raw encoder ticks
+        double distance = driveMotor.getSelectedSensorPosition();
+
+        if (!rawTicks) {
+            //Meters
+            distance /= RobotMap.DRIVE_ENCODER_TICKS_PER_METER;
+        }
+
+        return distance;
+    }
+
+    /**
+     * Gets the current velocity in meters/second that the drive wheel is moving
+     */
+    public double getVelocity() {
+        //Raw encoder ticks per 100 ms
+        double velocity = driveMotor.getSelectedSensorVelocity();
+
+        //Raw encoder ticks per 1 s
+        velocity *= 10;
+
+        //Meters per second
+        velocity /= RobotMap.DRIVE_ENCODER_TICKS_PER_METER;
+
+        return velocity;
     }
 
     /**
