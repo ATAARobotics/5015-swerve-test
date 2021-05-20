@@ -11,11 +11,14 @@ public class RobotMap {
     public static final double WHEELBASE = 0.65;
     public static final double TRACK_WIDTH = 0.53;
 
-    //Maximum speed is in meters/second
+    //Maximum linear speed is in meters/second
     public static final double MAXIMUM_SPEED = 0.5;
 
-    //Maximum acceleration is in meters/second/second
+    //Used only for auto. Maximum acceleration is in meters/second/second
     public static final double MAXIMUM_ACCELERATION = 0.25;
+
+    //Used only for teleop. Maximum rotational speed is in radians/second
+    public static final double MAXIMUM_ROTATIONAL_SPEED = 0.15;
 
     public static final int FRONT_LEFT_DRIVE_MOTOR = 0;
     public static final int FRONT_RIGHT_DRIVE_MOTOR = 2;
