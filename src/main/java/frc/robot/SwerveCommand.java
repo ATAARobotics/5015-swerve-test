@@ -45,7 +45,10 @@ public class SwerveCommand {
         //If any speed is larger than the maximum speed, all speeds need to be reduced to keep the ratio between the speeds correct
         if (maxSpeed > RobotMap.MAXIMUM_SPEED) {
             for (int i = 0; i < velocities.length; i++) {
+                //Bring the speeds down to a scale from 0 to 1, 1 being the highest speed
                 velocities[i] /= maxSpeed;
+                //Multiply by the maximum speed - this will make the highest speed the maximum speed, and make all the other values scale properly
+                velocities[i] *= RobotMap.MAXIMUM_SPEED;
             }
         }
     }

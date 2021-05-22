@@ -44,4 +44,11 @@ public class SwerveOdometry {
     public Pose2d getPose() {
         return pose;
     }
+
+    /**
+     * Sets a new pose manually
+     */
+    public void setPose(Pose2d pose) {
+        this.pose = pose;
+    }
 }

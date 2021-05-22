@@ -25,6 +25,9 @@ public class SwerveDrive {
     //The current pose of the robot
     private Pose2d pose;
 
+    //The position that the robot started at
+    private Pose2d initialPose;
+
     /**
      * Set up the swerve drive
      * 
@@ -33,6 +36,7 @@ public class SwerveDrive {
      */
     public SwerveDrive(Gyro gyro, Pose2d initialPose) {
         this.gyro = gyro;
+        this.initialPose = initialPose;
 
         //Initialize four swerve modules using the SwerveModule class
         SwerveModule frontLeftModule = new SwerveModule(new WPI_TalonSRX(RobotMap.FRONT_LEFT_DRIVE_MOTOR), new VictorSPX(RobotMap.FRONT_LEFT_ROTATION_MOTOR), new AnalogInput(RobotMap.FRONT_LEFT_ROTATION_ENCODER), 1.9, false);
@@ -118,5 +122,13 @@ public class SwerveDrive {
      */
     public Pose2d getPose() {
         return pose;
+    }
+
+    /**
+     * Resets the pose to the initial pose
+     */
+    public void resetPose() {
+        pose = initialPose;
+        odometry.setPose(pose);
     }
 }
