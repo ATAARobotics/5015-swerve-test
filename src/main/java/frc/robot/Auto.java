@@ -7,6 +7,8 @@ import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.controller.ProfiledPIDController;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.geometry.Translation2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.trajectory.Trajectory.State;
 
@@ -35,11 +37,11 @@ public class Auto {
         rotationController.enableContinuousInput(-Math.PI, Math.PI);
 
         autoPath = new AutoPath(
+            new Pose2d(0.0, 0.0, new Rotation2d(0.0)),
             Arrays.asList(
-                new Pose2d(0.0, 0.0, new Rotation2d(0.0)),
-                new Pose2d(0.0, 1.0, new Rotation2d(0.0))
+                new Translation2d(0.0, 1.0)
             ),
-            0.0
+            new Pose2d(1.0, 1.0, new Rotation2d(0.0))
         );
 
         timer.reset();
@@ -65,5 +67,8 @@ public class Auto {
         double velocityRotation = rotationController.calculate(currentAngle, desiredAngle);
 
         swerveDrive.periodic(new SwerveCommand(velocityX + horizontalFeedback, velocityY + verticalFeedback, velocityRotation));
+
+        SmartDashboard.putNumber("X", desiredPose.getX());
+        SmartDashboard.putNumber("Y", desiredPose.getY());
     }
 }

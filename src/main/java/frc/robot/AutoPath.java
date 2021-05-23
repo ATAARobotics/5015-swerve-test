@@ -3,6 +3,7 @@ package frc.robot;
 import java.util.List;
 
 import edu.wpi.first.wpilibj.geometry.Pose2d;
+import edu.wpi.first.wpilibj.geometry.Translation2d;
 import edu.wpi.first.wpilibj.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryConfig;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryGenerator;
@@ -14,13 +15,12 @@ public class AutoPath {
 
     double targetAngle;
 
-    //TODO Fix this so we don't need a new path every time we want to change the heading
-    public AutoPath(List<Pose2d> waypoints, double targetAngle) {
+    public AutoPath(Pose2d startPoint, List<Translation2d> waypoints, Pose2d endPoint) {
         TrajectoryConfig trajectoryConfig = new TrajectoryConfig(RobotMap.MAXIMUM_SPEED, RobotMap.MAXIMUM_ACCELERATION);
 
-        this.targetAngle = targetAngle;
+        this.targetAngle = endPoint.getRotation().getRadians();
 
-        trajectory = TrajectoryGenerator.generateTrajectory(waypoints, trajectoryConfig);
+        trajectory = TrajectoryGenerator.generateTrajectory(startPoint, waypoints, endPoint, trajectoryConfig);
     }
 
     public double getTargetAngle() {
