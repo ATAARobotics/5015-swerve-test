@@ -24,15 +24,24 @@ public class Auto {
     private int autoSelected;
 
     private int commandRunning = 0;
+    private boolean newCommand = true;
+
+    private DataLogger pathLogger;
 
     public Auto(SwerveDrive swerveDrive) {
         this.swerveDrive = swerveDrive;
+
+        if (RobotMap.AUTO_PATH_LOGGING_ENABLED) {
+            pathLogger = new DataLogger("autoLog");
+        }
     }
 
     public void autoInit(int autoSelected) {
         this.autoSelected = autoSelected;
 
         swerveDrive.resetPose();
+
+        pathLogger.setupFile();
 
         //Configure the rotation PID to take the shortest route to the setpoint
         rotationController.enableContinuousInput(-Math.PI, Math.PI);
@@ -46,34 +55,47 @@ public class Auto {
         double velocityY = 0;
         double velocityRotation = 0;
 
-        switch (currentCommand.getCommandType()) {
-            case 0:
-                State desiredState = currentCommand.getState(timer.get());
-            
-                Pose2d currentPose = swerveDrive.getPose();
-                Pose2d desiredPose = desiredState.poseMeters;
-        
-                double currentAngle = currentPose.getRotation().getRadians();
-                double desiredAngle = currentCommand.getTargetAngle();
-        
-                double totalVelocity = desiredState.velocityMetersPerSecond;
+        if (currentCommand != null) {
+            switch (currentCommand.getCommandType()) {
+                case 0:
+                    if (newCommand) {
+                        newCommand = false;
+                        timer.reset();
+                        timer.start();
+                    }
+
+                    State desiredState = currentCommand.getState(timer.get());
                 
-                velocityX = totalVelocity * desiredPose.getRotation().getCos();
-                velocityY = totalVelocity * desiredPose.getRotation().getSin();
-        
-                velocityX += xController.calculate(currentPose.getX(), desiredPose.getX());
-                velocityY += yController.calculate(currentPose.getY(), desiredPose.getY());
-        
-                velocityRotation = rotationController.calculate(currentAngle, desiredAngle);
+                    Pose2d currentPose = swerveDrive.getPose();
+                    Pose2d desiredPose = desiredState.poseMeters;
+            
+                    double currentAngle = currentPose.getRotation().getRadians();
+                    double desiredAngle = currentCommand.getTargetAngle();
+            
+                    double totalVelocity = desiredState.velocityMetersPerSecond;
+                    
+                    velocityX = totalVelocity * desiredPose.getRotation().getCos();
+                    velocityY = totalVelocity * desiredPose.getRotation().getSin();
+            
+                    velocityX += xController.calculate(currentPose.getX(), desiredPose.getX());
+                    velocityY += yController.calculate(currentPose.getY(), desiredPose.getY());
+            
+                    velocityRotation = rotationController.calculate(currentAngle, desiredAngle);
 
-                if (timer.get() >= currentCommand.getTotalTime()) {
-                    commandRunning++;
-                }
-                break;
+                    if (RobotMap.AUTO_PATH_LOGGING_ENABLED) {
+                        pathLogger.writeLine(desiredPose.getX() + "," + desiredPose.getY() + "," + currentPose.getX() + "," + currentPose.getY() + "," + Timer.getFPGATimestamp());
+                    }
 
-            default:
-                System.err.println("There is no auto command with type " + currentCommand.getCommandType() + "!");
-                break;
+                    if (timer.get() >= currentCommand.getTotalTime()) {
+                        commandRunning++;
+                        newCommand = true;
+                    }
+                    break;
+
+                default:
+                    System.err.println("There is no auto command with type " + currentCommand.getCommandType() + "!");
+                    break;
+            }
         }
 
         swerveDrive.periodic(new SwerveCommand(velocityX, velocityY, velocityRotation));

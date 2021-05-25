@@ -37,4 +37,6 @@ public class RobotMap {
     public static final int FRONT_RIGHT_ROTATION_ENCODER = 1;
     public static final int REAR_LEFT_ROTATION_ENCODER = 2;
     public static final int REAR_RIGHT_ROTATION_ENCODER = 3;
+
+    public static final boolean AUTO_PATH_LOGGING_ENABLED = true;
 }

@@ -13,7 +13,7 @@ public class Robot extends TimedRobot {
     public Auto auto = null;
     public Teleop teleop = null;
 
-    public Pose2d initialPose = new Pose2d(0.0, 0.0, new Rotation2d(0));
+    public Pose2d initialPose = new Pose2d(5.0, 5.0, new Rotation2d(0.0));
 
     public Robot() {
         //Hardware-based objects
@@ -28,7 +28,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void robotInit() {
-
+        auto.createPrograms();
     }
 
     /**

@@ -12,11 +12,11 @@ public class AutoPaths {
 
     public AutoPaths() {
         testPath = new AutoCommand(
-            new Pose2d(0.0, 0.0, new Rotation2d(0.0)),
+            new Pose2d(5.0, 5.0, new Rotation2d(0.0)),
             Arrays.asList(
-                new Translation2d(0.0, 1.0)
+                new Translation2d(5.0, 6.0)
             ),
-            new Pose2d(1.0, 1.0, new Rotation2d(0.0))
+            new Pose2d(6.0, 6.0, new Rotation2d(0.0))
         );
     }
 
