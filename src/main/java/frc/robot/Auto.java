@@ -19,7 +19,7 @@ public class Auto {
 
     private Timer timer = new Timer();
 
-    private AutoProgram[] autoPrograms;
+    private AutoCommand[][] autoPrograms;
 
     private int autoSelected;
 
@@ -49,7 +49,7 @@ public class Auto {
 
     public void autoPeriodic() {
 
-        AutoCommand currentCommand = autoPrograms[autoSelected].getCommand(commandRunning);
+        AutoCommand currentCommand = autoPrograms[autoSelected][commandRunning];
 
         double velocityX = 0;
         double velocityY = 0;
@@ -82,8 +82,9 @@ public class Auto {
             
                     velocityRotation = rotationController.calculate(currentAngle, desiredAngle);
 
+                    //TODO Find out why the robot turns funny to start
                     if (RobotMap.AUTO_PATH_LOGGING_ENABLED) {
-                        pathLogger.writeLine(desiredPose.getX() + "," + desiredPose.getY() + "," + currentPose.getX() + "," + currentPose.getY() + "," + Timer.getFPGATimestamp());
+                        pathLogger.writeLine(desiredPose.getX() + "," + desiredPose.getY() + "," + currentPose.getX() + "," + currentPose.getY() + "," + desiredPose.getRotation().getRadians() + "," + Timer.getFPGATimestamp());
                     }
 
                     if (timer.get() >= currentCommand.getTotalTime()) {
@@ -104,10 +105,10 @@ public class Auto {
     public void createPrograms() {
         AutoPaths autoPaths = new AutoPaths();
 
-        autoPrograms = new AutoProgram[] {
-            new AutoProgram(
+        autoPrograms = new AutoCommand[][] {
+            {
                 autoPaths.getTestPath()
-            )
+            }
         };
     }
 }
