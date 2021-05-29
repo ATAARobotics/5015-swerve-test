@@ -1,5 +1,6 @@
 package frc.robot;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import edu.wpi.first.wpilibj.geometry.Pose2d;
@@ -12,9 +13,12 @@ import edu.wpi.first.wpilibj.trajectory.Trajectory.State;
 
 public class AutoCommand {
 
-    Trajectory trajectory;
+    Trajectory trajectory = null;
 
     double targetAngle = -999.0;
+
+    //THIS SHOULD ONLY BE USED FOR DATA LOGGING
+    List<Translation2d> waypoints = null;
 
     int actionType = 0;
 
@@ -39,6 +43,13 @@ public class AutoCommand {
 
         //Store the target angle during execution of this path
         this.targetAngle = targetAngle;
+
+        //Store the waypoints for data logging purposes
+        if (RobotMap.AUTO_PATH_LOGGING_ENABLED) {
+            this.waypoints = new ArrayList<Translation2d>(waypoints);
+        }
+
+        waypoints = new ArrayList<Translation2d>(waypoints);
 
         //Get the first and last two points in this path. Some of these may be the same.
         Translation2d firstPoint = waypoints.get(0);
@@ -99,5 +110,12 @@ public class AutoCommand {
         } else {
             return null;
         }
+    }
+
+    /**
+     * For data logging only! Gets a list of all the waypoints in this command
+     */
+    public List<Translation2d> getWaypoints() {
+        return waypoints;
     }
 }

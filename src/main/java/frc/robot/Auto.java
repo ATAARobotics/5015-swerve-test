@@ -1,9 +1,12 @@
 package frc.robot;
 
+import java.util.List;
+
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.controller.ProfiledPIDController;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
+import edu.wpi.first.wpilibj.geometry.Translation2d;
 import edu.wpi.first.wpilibj.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.trajectory.Trajectory.State;
 
@@ -51,6 +54,16 @@ public class Auto {
         //Reset the data logger (just in case we want to run auto more than once without restarting)
         if (RobotMap.AUTO_PATH_LOGGING_ENABLED) {
             pathLogger.setupFile();
+
+            for (AutoCommand autoCommand : autoPrograms[autoSelected]) {
+                if (autoCommand.getCommandType() == 0) {
+                    List<Translation2d> waypoints = autoCommand.getWaypoints();
+                    for (Translation2d waypoint : waypoints) {
+                        pathLogger.writeLine(waypoint.getX() + "," + waypoint.getY());
+                    }
+                }
+            }
+            pathLogger.writeLine("PATH LOG STARTS HERE");
         }
 
         //Configure the rotation PID to take the shortest route to the setpoint
