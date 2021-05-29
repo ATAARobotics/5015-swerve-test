@@ -13,6 +13,7 @@ public class Robot extends TimedRobot {
     public Auto auto = null;
     public Teleop teleop = null;
 
+    //The initial position of the robot relative to the field. This is measured from the left-hand corner of the field closest to the driver, from the driver's perspective
     public Pose2d initialPose = new Pose2d(5.0, 5.0, new Rotation2d(0.0));
 
     public Robot() {
@@ -28,6 +29,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void robotInit() {
+        //Create the auto programs in robotInit because it uses a ton of trigonometry, which is computationally expensive
         auto.createPrograms();
     }
 

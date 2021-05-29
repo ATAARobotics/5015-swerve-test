@@ -15,6 +15,7 @@ public class SwerveCommand {
         this.velocityVertical = velocityVertical;
         this.velocityRotation = velocityRotation;
 
+        //Get the wheelbase and track width from RobotMap. These are important because a long rectangular robot turns differently than a square robot
         double wheelbase = RobotMap.WHEELBASE;
         double trackWidth = RobotMap.TRACK_WIDTH;
 
@@ -33,6 +34,7 @@ public class SwerveCommand {
             Math.sqrt(Math.pow(a, 2) + Math.pow(c, 2))
         };
         angles = new double[]{
+            //Math.atan2(y, x) computes the angle to a given point from the x axis
             Math.atan2(b, d),
             Math.atan2(b, c),
             Math.atan2(a, d),

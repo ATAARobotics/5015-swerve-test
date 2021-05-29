@@ -110,7 +110,8 @@ public class SwerveModule {
     public void setTargetAngle(double angle) {
         double currentAngle = getAngle();
 
-        //If the smallest angle between the current angle and the target is greater than Pi/2, invert the velocity, not the wheel
+        //If the smallest angle between the current angle and the target is greater than Pi/2, invert the velocity and turn the wheel to a closer angle
+        //Math.atan2(y, x) computes the angle to a given point from the x-axis
         if (Math.abs(Math.atan2(Math.sin(angle - currentAngle), Math.cos(angle - currentAngle))) > Math.PI / 2.0) {            
             angle += Math.PI;
             angle %= 2.0 * Math.PI;

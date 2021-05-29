@@ -5,7 +5,7 @@ package frc.robot;
  */
 public class RobotMap {
     //Enforces a maximum safe speed of the motors. This may cause steering issues, so this should always be 1 unless debugging
-    public static final double MAX_SAFE_SPEED_OVERRIDE = 0.2;
+    public static final double MAX_SAFE_SPEED_OVERRIDE = 0.0;
 
     //Measurements are in meters
     public static final double WHEELBASE = 0.65;
@@ -38,5 +38,6 @@ public class RobotMap {
     public static final int REAR_LEFT_ROTATION_ENCODER = 2;
     public static final int REAR_RIGHT_ROTATION_ENCODER = 3;
 
+    //Set this to true if you want to visualize the robot's movement during auto
     public static final boolean AUTO_PATH_LOGGING_ENABLED = true;
 }

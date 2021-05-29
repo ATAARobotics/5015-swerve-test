@@ -5,8 +5,10 @@ import edu.wpi.first.wpilibj.geometry.Rotation2d;
 
 public class SwerveOdometry {
 
+    //Stores the current position of the robot
     private Pose2d pose;
 
+    //The last time the odometry was updated
     private double lastUpdate = -1.0;
 
     public SwerveOdometry(Pose2d initialPose) {
@@ -28,11 +30,14 @@ public class SwerveOdometry {
             period = 0.0;
         }
 
+        //Stores the current timestamp as the most recent update
         lastUpdate = timestamp;
 
+        //Get the distance traveled since the last update based on the current velocity
         double distanceHorizontal = command.getVelocityHorizontal() * period;
         double distanceVertical = command.getVelocityVertical() * period;
 
+        //Updates the position of the robot based on the distance traveled
         pose = new Pose2d(pose.getX() + distanceHorizontal, pose.getY() + distanceVertical, new Rotation2d(currentAngle));
 
         return pose;

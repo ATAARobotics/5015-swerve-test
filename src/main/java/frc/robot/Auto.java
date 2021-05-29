@@ -11,6 +11,7 @@ public class Auto {
 
     private SwerveDrive swerveDrive;
 
+    //Create PIDs to control the position of the robot in the x and y direction
     private PIDController xController = new PIDController(0.07, 0, 0.001);
     private PIDController yController = new PIDController(0.07, 0, 0.001);
 
@@ -19,18 +20,23 @@ public class Auto {
 
     private Timer timer = new Timer();
 
+    //Stores all the auto programs
     private AutoCommand[][] autoPrograms;
 
+    //The auto program to run
     private int autoSelected;
 
+    //These keep track of the current command in the program, and whether the command that is running just started
     private int commandRunning = 0;
     private boolean newCommand = true;
 
+    //This logs the path of the robot during autonomous (if enabled in RobotMap)
     private DataLogger pathLogger;
 
     public Auto(SwerveDrive swerveDrive) {
         this.swerveDrive = swerveDrive;
 
+        //Create a data logging object to log the path
         if (RobotMap.AUTO_PATH_LOGGING_ENABLED) {
             pathLogger = new DataLogger("autoLog");
         }
@@ -39,9 +45,13 @@ public class Auto {
     public void autoInit(int autoSelected) {
         this.autoSelected = autoSelected;
 
+        //Resets the position of the robot (just in case we want to run auto more than once without restarting)
         swerveDrive.resetPose();
 
-        pathLogger.setupFile();
+        //Reset the data logger (just in case we want to run auto more than once without restarting)
+        if (RobotMap.AUTO_PATH_LOGGING_ENABLED) {
+            pathLogger.setupFile();
+        }
 
         //Configure the rotation PID to take the shortest route to the setpoint
         rotationController.enableContinuousInput(-Math.PI, Math.PI);
@@ -49,7 +59,16 @@ public class Auto {
 
     public void autoPeriodic() {
 
-        AutoCommand currentCommand = autoPrograms[autoSelected][commandRunning];
+        //Get the command in the auto program to run, unless auto is finished
+        AutoCommand currentCommand = null;
+        if (commandRunning < autoPrograms[autoSelected].length) {
+            currentCommand = autoPrograms[autoSelected][commandRunning];
+        } else {
+            //Auto is complete, so close the data logger if we used it
+            if (newCommand && RobotMap.AUTO_PATH_LOGGING_ENABLED) {
+                pathLogger.close();
+            }
+        }
 
         double velocityX = 0;
         double velocityY = 0;
@@ -64,30 +83,42 @@ public class Auto {
                         timer.start();
                     }
 
+                    //Get the state at this time from the trajectory
                     State desiredState = currentCommand.getState(timer.get());
                 
+                    //Get the current position of the robot
                     Pose2d currentPose = swerveDrive.getPose();
+
+                    //Get the position we want to be at
                     Pose2d desiredPose = desiredState.poseMeters;
             
+                    //Get the current angle of the robot
                     double currentAngle = currentPose.getRotation().getRadians();
+
+                    //Get the angle we want to be at
                     double desiredAngle = currentCommand.getTargetAngle();
             
+                    //Get the total speed the robot should be travelling (not accounting for deviations)
                     double totalVelocity = desiredState.velocityMetersPerSecond;
                     
+                    //Get the velocity in the X and Y direction based on the heading and total speed
                     velocityX = totalVelocity * desiredPose.getRotation().getCos();
                     velocityY = totalVelocity * desiredPose.getRotation().getSin();
             
+                    //Change the speeds to account for deviations
                     velocityX += xController.calculate(currentPose.getX(), desiredPose.getX());
                     velocityY += yController.calculate(currentPose.getY(), desiredPose.getY());
             
+                    //Get the current rotational velocity from the rotation PID based on the desired angle
                     velocityRotation = rotationController.calculate(currentAngle, desiredAngle);
 
-                    //TODO Find out why the robot turns funny to start
+                    //Log the current and expected position (don't change this without changing the path viewer utility to read it properly)
                     if (RobotMap.AUTO_PATH_LOGGING_ENABLED) {
-                        pathLogger.writeLine(desiredPose.getX() + "," + desiredPose.getY() + "," + currentPose.getX() + "," + currentPose.getY() + "," + desiredPose.getRotation().getRadians() + "," + Timer.getFPGATimestamp());
+                        pathLogger.writeLine(desiredPose.getX() + "," + desiredPose.getY() + "," + currentPose.getX() + "," + currentPose.getY() + "," + Timer.getFPGATimestamp());
                     }
 
-                    if (timer.get() >= currentCommand.getTotalTime()) {
+                    //Check if the robot finished the path
+                    if (desiredState == currentCommand.getLastState()) {
                         commandRunning++;
                         newCommand = true;
                     }
@@ -99,12 +130,18 @@ public class Auto {
             }
         }
 
+        //Drive the robot based on computed velocities
         swerveDrive.periodic(new SwerveCommand(velocityX, velocityY, velocityRotation));
     }
 
+    /**
+     * Initializes the auto programs
+     */
     public void createPrograms() {
+        //Get the paths from place to place
         AutoPaths autoPaths = new AutoPaths();
 
+        //Create the auto programs. This should be an array of AutoCommand arrays. Each nested array is an auto program that will execute its contents in order.
         autoPrograms = new AutoCommand[][] {
             {
                 autoPaths.getTestPath()
