@@ -34,11 +34,11 @@ public class SwerveOdometry {
         lastUpdate = timestamp;
 
         //Get the distance traveled since the last update based on the current velocity
-        double distanceHorizontal = command.getVelocityHorizontal() * period;
-        double distanceVertical = command.getVelocityVertical() * period;
+        double distanceX = command.getXVelocity() * period;
+        double distanceY = command.getYVelocity() * period;
 
         //Updates the position of the robot based on the distance traveled
-        pose = new Pose2d(pose.getX() + distanceHorizontal, pose.getY() + distanceVertical, new Rotation2d(currentAngle));
+        pose = new Pose2d(pose.getX() + distanceX, pose.getY() + distanceY, new Rotation2d(currentAngle));
 
         return pose;
     }

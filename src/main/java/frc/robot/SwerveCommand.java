@@ -2,18 +2,18 @@ package frc.robot;
 
 public class SwerveCommand {
 
-    private double velocityHorizontal;
-    private double velocityVertical;
-    private double velocityRotation;
+    private double xVelocity;
+    private double yVelocity;
+    private double rotationVelocity;
 
     private double[] velocities;
     private double[] angles;
 
-    public SwerveCommand(double velocityHorizontal, double velocityVertical, double velocityRotation) {
+    public SwerveCommand(double xVelocity, double yVelocity, double rotationVelocity) {
 
-        this.velocityHorizontal = velocityHorizontal;
-        this.velocityVertical = velocityVertical;
-        this.velocityRotation = velocityRotation;
+        this.xVelocity = xVelocity;
+        this.yVelocity = yVelocity;
+        this.rotationVelocity = rotationVelocity;
 
         //Get the wheelbase and track width from RobotMap. These are important because a long rectangular robot turns differently than a square robot
         double wheelbase = RobotMap.WHEELBASE;
@@ -22,10 +22,10 @@ public class SwerveCommand {
         //Calculate wheel velocities and angles
         double a,b,c,d;
         
-        a = velocityHorizontal - velocityRotation * wheelbase / 2;
-        b = velocityHorizontal + velocityRotation * wheelbase / 2;
-        c = velocityVertical - velocityRotation * trackWidth / 2;
-        d = velocityVertical + velocityRotation * trackWidth / 2;
+        a = xVelocity - rotationVelocity * wheelbase / 2;
+        b = xVelocity + rotationVelocity * wheelbase / 2;
+        c = yVelocity - rotationVelocity * trackWidth / 2;
+        d = yVelocity + rotationVelocity * trackWidth / 2;
 
         velocities = new double[]{
             Math.sqrt(Math.pow(b, 2) + Math.pow(d, 2)),
@@ -71,15 +71,15 @@ public class SwerveCommand {
         return angles[moduleId];
     }
 
-    public double getVelocityHorizontal() {
-        return velocityHorizontal;
+    public double getXVelocity() {
+        return xVelocity;
     }
 
-    public double getVelocityVertical() {
-        return velocityVertical;
+    public double getYVelocity() {
+        return yVelocity;
     }
 
-    public double getVelocityRotation() {
-        return velocityRotation;
+    public double getRotationVelocity() {
+        return rotationVelocity;
     }
 }

@@ -83,9 +83,9 @@ public class Auto {
             }
         }
 
-        double velocityX = 0;
-        double velocityY = 0;
-        double velocityRotation = 0;
+        double xVelocity = 0;
+        double yVelocity = 0;
+        double rotationVelocity = 0;
 
         if (currentCommand != null) {
             switch (currentCommand.getCommandType()) {
@@ -115,15 +115,15 @@ public class Auto {
                     double totalVelocity = desiredState.velocityMetersPerSecond;
                     
                     //Get the velocity in the X and Y direction based on the heading and total speed
-                    velocityX = totalVelocity * desiredPose.getRotation().getCos();
-                    velocityY = totalVelocity * desiredPose.getRotation().getSin();
+                    xVelocity = totalVelocity * desiredPose.getRotation().getCos();
+                    yVelocity = totalVelocity * desiredPose.getRotation().getSin();
             
                     //Change the speeds to account for deviations
-                    velocityX += xController.calculate(currentPose.getX(), desiredPose.getX());
-                    velocityY += yController.calculate(currentPose.getY(), desiredPose.getY());
+                    xVelocity += xController.calculate(currentPose.getX(), desiredPose.getX());
+                    yVelocity += yController.calculate(currentPose.getY(), desiredPose.getY());
             
                     //Get the current rotational velocity from the rotation PID based on the desired angle
-                    velocityRotation = rotationController.calculate(currentAngle, desiredAngle);
+                    rotationVelocity = rotationController.calculate(currentAngle, desiredAngle);
 
                     //Log the current and expected position (don't change this without changing the path viewer utility to read it properly)
                     if (RobotMap.AUTO_PATH_LOGGING_ENABLED) {
@@ -144,7 +144,7 @@ public class Auto {
         }
 
         //Drive the robot based on computed velocities
-        swerveDrive.periodic(new SwerveCommand(velocityX, velocityY, velocityRotation));
+        swerveDrive.periodic(new SwerveCommand(xVelocity, yVelocity, rotationVelocity));
     }
 
     /**
