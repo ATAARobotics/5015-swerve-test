@@ -39,18 +39,10 @@ public class SwerveDrive {
         this.initialPose = initialPose;
 
         //Initialize four swerve modules using the SwerveModule class
-        SwerveModule frontLeftModule = new SwerveModule(new WPI_TalonSRX(RobotMap.FRONT_LEFT_DRIVE_MOTOR), new VictorSPX(RobotMap.FRONT_LEFT_ROTATION_MOTOR), new AnalogInput(RobotMap.FRONT_LEFT_ROTATION_ENCODER), 1.9, false);
-        frontLeftModule.setId(0);
-        frontLeftModule.setName("Front Left");
-        SwerveModule frontRightModule = new SwerveModule(new WPI_TalonSRX(RobotMap.FRONT_RIGHT_DRIVE_MOTOR), new VictorSPX(RobotMap.FRONT_RIGHT_ROTATION_MOTOR), new AnalogInput(RobotMap.FRONT_RIGHT_ROTATION_ENCODER), -1.1, true);
-        frontRightModule.setId(1);
-        frontRightModule.setName("Front Right");
-        SwerveModule rearLeftModule = new SwerveModule(new WPI_TalonSRX(RobotMap.REAR_LEFT_DRIVE_MOTOR), new VictorSPX(RobotMap.REAR_LEFT_ROTATION_MOTOR), new AnalogInput(RobotMap.REAR_LEFT_ROTATION_ENCODER), -2.3, false);
-        rearLeftModule.setId(2);
-        rearLeftModule.setName("Rear Left");
-        SwerveModule rearRightModule = new SwerveModule(new WPI_TalonSRX(RobotMap.REAR_RIGHT_DRIVE_MOTOR), new VictorSPX(RobotMap.REAR_RIGHT_ROTATION_MOTOR), new AnalogInput(RobotMap.REAR_RIGHT_ROTATION_ENCODER), 2.1, true);
-        rearRightModule.setId(3);
-        rearRightModule.setName("Rear Right");
+        SwerveModule frontLeftModule = new SwerveModule(new WPI_TalonSRX(RobotMap.FRONT_LEFT_DRIVE_MOTOR), new VictorSPX(RobotMap.FRONT_LEFT_ROTATION_MOTOR), new AnalogInput(RobotMap.FRONT_LEFT_ROTATION_ENCODER), 1.9, false, 0, "Front Left");
+        SwerveModule frontRightModule = new SwerveModule(new WPI_TalonSRX(RobotMap.FRONT_RIGHT_DRIVE_MOTOR), new VictorSPX(RobotMap.FRONT_RIGHT_ROTATION_MOTOR), new AnalogInput(RobotMap.FRONT_RIGHT_ROTATION_ENCODER), -1.1, true, 1 "Front Right");
+        SwerveModule rearLeftModule = new SwerveModule(new WPI_TalonSRX(RobotMap.REAR_LEFT_DRIVE_MOTOR), new VictorSPX(RobotMap.REAR_LEFT_ROTATION_MOTOR), new AnalogInput(RobotMap.REAR_LEFT_ROTATION_ENCODER), -2.3, false, 2, "Rear Left");
+        SwerveModule rearRightModule = new SwerveModule(new WPI_TalonSRX(RobotMap.REAR_RIGHT_DRIVE_MOTOR), new VictorSPX(RobotMap.REAR_RIGHT_ROTATION_MOTOR), new AnalogInput(RobotMap.REAR_RIGHT_ROTATION_ENCODER), 2.1, true, 3, "Rear Right");
 
         //Put the swerve modules in an array so we can process them easier
         swerveModules = new SwerveModule[]{

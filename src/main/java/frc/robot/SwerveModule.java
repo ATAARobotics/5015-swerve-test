@@ -27,10 +27,10 @@ public class SwerveModule {
     private double inversionConstant = 1.0;
 
     //The ID number of the module
-    private int id = -1;
+    private int id;
 
     //The name of the module - not used for much other than debugging
-    private String name = "Unknown";
+    private String name;
 
     //The velocity (-1 to 1) to run the motor
     private double driveVelocity = 0.0;
@@ -51,11 +51,15 @@ public class SwerveModule {
      * @param rotationOffset The distance from zero that forward is on the encoder
      * @param invertDrive Whether to invert the direction of the wheel
      */
-    public SwerveModule(WPI_TalonSRX driveMotor, VictorSPX rotationMotor, AnalogInput rotationEncoder, double rotationOffset, boolean invertDrive) {
+    public SwerveModule(WPI_TalonSRX driveMotor, VictorSPX rotationMotor, AnalogInput rotationEncoder, double rotationOffset, boolean invertDrive, int id, String name) {
         this.driveMotor = driveMotor;
         this.rotationMotor = rotationMotor;
         this.rotationEncoder = rotationEncoder;
         this.rotationOffset = rotationOffset;
+
+        this.id = id;
+        this.name = name;
+
         if (invertDrive) {
             this.inversionConstant = -1.0;
         }
@@ -178,24 +182,10 @@ public class SwerveModule {
     }
 
     /**
-     * Set the id of the module
-     */
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    /**
      * Get the id of the module
      */
     public int getId() {
         return this.id;
-    }
-
-    /**
-     * Set the name of the module
-     */
-    public void setName(String name) {
-        this.name = name;
     }
 
     /**
