@@ -70,28 +70,8 @@ public class SwerveDrive {
             //Set the drive velocity in meters/second for the module
             module.setDriveVelocity(command.getModuleVelocity(module.getId()));
 
-            //Set the angle of the module
-            if (fieldOriented) {
-                //Subtract the current heading of the robot from the desired angle to determine the actual angle required
-                double angle = command.getModuleAngle(module.getId()) - gyro.getAngle();
-
-                //Offset by Pi to find values in the wrong half of the circle
-                angle += Math.PI;
-
-                //Wrap angle at 2*Pi
-                angle %= 2.0 * Math.PI;
-
-                if (angle < 0) {
-                    angle += 2.0 * Math.PI;
-                }
-
-                //Undo the offset
-                angle -= Math.PI;
-
-                module.setTargetAngle(angle);
-            } else {
-                module.setTargetAngle(command.getModuleAngle(module.getId()));
-            }
+            //Set module angle target in radians from -Pi to Pi
+            module.setTargetAngle(command.getModuleAngle(module.getId()));
 
             //Run periodic tasks on the module (running motors)
             module.periodic();
@@ -113,6 +93,13 @@ public class SwerveDrive {
      */
     public boolean getFieldOriented() {
         return fieldOriented;
+    }
+
+    /**
+     * Gets the robot heading
+     */
+    public double getHeading() {
+        return gyro.getAngle();
     }
 
     /**

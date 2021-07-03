@@ -147,7 +147,7 @@ public class Auto {
         }
 
         //Drive the robot based on computed velocities
-        swerveDrive.periodic(new SwerveCommand(xVelocity, yVelocity, rotationVelocity));
+        swerveDrive.periodic(new SwerveCommand(xVelocity, yVelocity, rotationVelocity, true, swerveDrive.getHeading()));
     }
 
     /**

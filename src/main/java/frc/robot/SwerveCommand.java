@@ -9,11 +9,21 @@ public class SwerveCommand {
     private double[] velocities;
     private double[] angles;
 
-    public SwerveCommand(double xVelocity, double yVelocity, double rotationVelocity) {
+    public SwerveCommand(double xVelocity, double yVelocity, double rotationVelocity, boolean fieldOriented, double gyroAngle) {
 
         this.xVelocity = xVelocity;
         this.yVelocity = yVelocity;
         this.rotationVelocity = rotationVelocity;
+
+        if (fieldOriented) {
+            double motionAngle = Math.atan2(this.yVelocity, this.xVelocity);
+            double magnitude = Math.sqrt(Math.pow(this.xVelocity, 2) + Math.pow(this.yVelocity, 2));
+
+            motionAngle -= gyroAngle;
+
+            this.xVelocity = magnitude * Math.cos(motionAngle);
+            this.yVelocity = magnitude * Math.sin(motionAngle);
+        }
 
         //Get the wheelbase and track width from RobotMap. These are important because a long rectangular robot turns differently than a square robot
         double wheelbase = RobotMap.WHEELBASE;
@@ -22,10 +32,10 @@ public class SwerveCommand {
         //Calculate wheel velocities and angles
         double a,b,c,d;
         
-        a = xVelocity - rotationVelocity * wheelbase / 2;
-        b = xVelocity + rotationVelocity * wheelbase / 2;
-        c = yVelocity - rotationVelocity * trackWidth / 2;
-        d = yVelocity + rotationVelocity * trackWidth / 2;
+        a = this.xVelocity - this.rotationVelocity * wheelbase / 2;
+        b = this.xVelocity + this.rotationVelocity * wheelbase / 2;
+        c = this.yVelocity - this.rotationVelocity * trackWidth / 2;
+        d = this.yVelocity + this.rotationVelocity * trackWidth / 2;
 
         velocities = new double[]{
             Math.sqrt(Math.pow(b, 2) + Math.pow(d, 2)),
