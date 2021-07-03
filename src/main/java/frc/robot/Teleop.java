@@ -20,6 +20,11 @@ public class Teleop {
         joysticks.checkInputs();
 
         //Run periodic tasks on the swerve drive, setting the velocity and rotation
-        swerveDrive.periodic(new SwerveCommand(joysticks.getXVelocity() * RobotMap.MAXIMUM_SPEED, joysticks.getYVelocity() * RobotMap.MAXIMUM_SPEED, joysticks.getRotationVelocity() * RobotMap.MAXIMUM_ROTATIONAL_SPEED));
+        swerveDrive.periodic(new SwerveCommand(-joysticks.getXVelocity() * RobotMap.MAXIMUM_SPEED, joysticks.getYVelocity() * RobotMap.MAXIMUM_SPEED, -joysticks.getRotationVelocity() * RobotMap.MAXIMUM_ROTATIONAL_SPEED));
+    
+        if (joysticks.getToggleFieldOriented()) {
+            swerveDrive.setFieldOriented(!swerveDrive.getFieldOriented());
+            swerveDrive.resetHeading();
+        }
     }
 }

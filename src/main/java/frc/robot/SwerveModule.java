@@ -5,6 +5,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.controller.PIDController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpiutil.math.MathUtil;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
@@ -50,6 +51,8 @@ public class SwerveModule {
      * @param rotationEncoder The input from the encoder. The cable for this MUST be in an "Analog In" port on the roboRIO
      * @param rotationOffset The distance from zero that forward is on the encoder
      * @param invertDrive Whether to invert the direction of the wheel
+     * @param id The ID of the module
+     * @param name The name of the module
      */
     public SwerveModule(WPI_TalonSRX driveMotor, VictorSPX rotationMotor, AnalogInput rotationEncoder, double rotationOffset, boolean invertDrive, int id, String name) {
         this.driveMotor = driveMotor;
@@ -77,7 +80,9 @@ public class SwerveModule {
      */
     public void periodic() {
         //Set the drive velocity, clamped to not exceed the maximum safe speed
-        driveMotor.set(ControlMode.PercentOutput, MathUtil.clamp(velocityController.calculate(getVelocity()), -RobotMap.MAX_SAFE_SPEED_OVERRIDE, RobotMap.MAX_SAFE_SPEED_OVERRIDE));
+        double calculated = velocityController.calculate(getVelocity());
+        double velocity = MathUtil.clamp(calculated, -RobotMap.MAX_SAFE_SPEED_OVERRIDE, RobotMap.MAX_SAFE_SPEED_OVERRIDE);
+        driveMotor.set(ControlMode.PercentOutput, velocity);
 
         //Get the rotation velocity
         double rotationVelocity = -angleController.calculate(getAngle());
@@ -94,6 +99,13 @@ public class SwerveModule {
         } else {
             rotationMotor.set(ControlMode.PercentOutput, 0.0);
         }
+
+        SmartDashboard.putNumber(name + " Encoder", driveMotor.getSelectedSensorPosition());
+        SmartDashboard.putNumber(name + " Expected", driveVelocity);
+        SmartDashboard.putNumber(name + " Calculated", calculated);
+        SmartDashboard.putNumber(name + " Error", velocityController.getPositionError());
+        SmartDashboard.putNumber(name + " Sent", velocity);
+        SmartDashboard.putNumber(name + " Speed", getVelocity());
     }
 
     /**
@@ -103,6 +115,7 @@ public class SwerveModule {
      * @param velocity The velocity to drive the module. 
      */
     public void setDriveVelocity(double velocity) {
+        driveVelocity = velocity;
         velocityController.setSetpoint(velocity * inversionConstant * reverseMultiplier);
     }
 

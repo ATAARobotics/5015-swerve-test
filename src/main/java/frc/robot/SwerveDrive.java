@@ -39,10 +39,10 @@ public class SwerveDrive {
         this.initialPose = initialPose;
 
         //Initialize four swerve modules using the SwerveModule class
-        SwerveModule frontLeftModule = new SwerveModule(new WPI_TalonSRX(RobotMap.FRONT_LEFT_DRIVE_MOTOR), new VictorSPX(RobotMap.FRONT_LEFT_ROTATION_MOTOR), new AnalogInput(RobotMap.FRONT_LEFT_ROTATION_ENCODER), 1.9, false, 0, "Front Left");
-        SwerveModule frontRightModule = new SwerveModule(new WPI_TalonSRX(RobotMap.FRONT_RIGHT_DRIVE_MOTOR), new VictorSPX(RobotMap.FRONT_RIGHT_ROTATION_MOTOR), new AnalogInput(RobotMap.FRONT_RIGHT_ROTATION_ENCODER), -1.1, true, 1, "Front Right");
-        SwerveModule rearLeftModule = new SwerveModule(new WPI_TalonSRX(RobotMap.REAR_LEFT_DRIVE_MOTOR), new VictorSPX(RobotMap.REAR_LEFT_ROTATION_MOTOR), new AnalogInput(RobotMap.REAR_LEFT_ROTATION_ENCODER), -2.3, false, 2, "Rear Left");
-        SwerveModule rearRightModule = new SwerveModule(new WPI_TalonSRX(RobotMap.REAR_RIGHT_DRIVE_MOTOR), new VictorSPX(RobotMap.REAR_RIGHT_ROTATION_MOTOR), new AnalogInput(RobotMap.REAR_RIGHT_ROTATION_ENCODER), 2.1, true, 3, "Rear Right");
+        SwerveModule frontLeftModule = new SwerveModule(new WPI_TalonSRX(RobotMap.FRONT_LEFT_DRIVE_MOTOR), new VictorSPX(RobotMap.FRONT_LEFT_ROTATION_MOTOR), new AnalogInput(RobotMap.FRONT_LEFT_ROTATION_ENCODER), 1.9, true, 0, "Front Left");
+        SwerveModule frontRightModule = new SwerveModule(new WPI_TalonSRX(RobotMap.FRONT_RIGHT_DRIVE_MOTOR), new VictorSPX(RobotMap.FRONT_RIGHT_ROTATION_MOTOR), new AnalogInput(RobotMap.FRONT_RIGHT_ROTATION_ENCODER), -1.1, false, 1, "Front Right");
+        SwerveModule rearLeftModule = new SwerveModule(new WPI_TalonSRX(RobotMap.REAR_LEFT_DRIVE_MOTOR), new VictorSPX(RobotMap.REAR_LEFT_ROTATION_MOTOR), new AnalogInput(RobotMap.REAR_LEFT_ROTATION_ENCODER), -2.3, true, 2, "Rear Left");
+        SwerveModule rearRightModule = new SwerveModule(new WPI_TalonSRX(RobotMap.REAR_RIGHT_DRIVE_MOTOR), new VictorSPX(RobotMap.REAR_RIGHT_ROTATION_MOTOR), new AnalogInput(RobotMap.REAR_RIGHT_ROTATION_ENCODER), 2.1, false, 3, "Rear Right");
 
         //Put the swerve modules in an array so we can process them easier
         swerveModules = new SwerveModule[]{
@@ -75,13 +75,12 @@ public class SwerveDrive {
                 //Subtract the current heading of the robot from the desired angle to determine the actual angle required
                 double angle = command.getModuleAngle(module.getId()) - gyro.getAngle();
 
-                 //Offset by Pi to find values in the wrong half of the circle
+                //Offset by Pi to find values in the wrong half of the circle
                 angle += Math.PI;
 
                 //Wrap angle at 2*Pi
                 angle %= 2.0 * Math.PI;
 
-                //Ensure the value is not negative
                 if (angle < 0) {
                     angle += 2.0 * Math.PI;
                 }
@@ -107,6 +106,20 @@ public class SwerveDrive {
      */
     public void setFieldOriented(boolean fieldOriented) {
         this.fieldOriented = fieldOriented;
+    }
+
+    /**
+     * Gets whether the robot is field-oriented
+     */
+    public boolean getFieldOriented() {
+        return fieldOriented;
+    }
+
+    /**
+     * Resets the robot heading
+     */
+    public void resetHeading() {
+        gyro.reset();
     }
 
     /**

@@ -48,6 +48,9 @@ public class Auto {
     public void autoInit(int autoSelected) {
         this.autoSelected = autoSelected;
 
+        //Sets the swerve drive to robot-oriented
+        swerveDrive.setFieldOriented(false);
+
         //Resets the position of the robot (just in case we want to run auto more than once without restarting)
         swerveDrive.resetPose();
 

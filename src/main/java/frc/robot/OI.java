@@ -8,6 +8,8 @@ class OI {
     private double yVelocity;
     private double rotationVelocity;
 
+    private boolean toggleFieldOriented;
+
     public OI() {
         
     }
@@ -20,6 +22,8 @@ class OI {
         if (xVelocity < 0.3 && xVelocity > -0.3) { xVelocity = 0; }
         if (yVelocity < 0.3 && yVelocity > -0.3) { yVelocity = 0; }
         if (rotationVelocity < 0.3 && rotationVelocity > -0.3) { rotationVelocity = 0; }
+
+        toggleFieldOriented = driveStick.getXButtonPressed();
     }
 
     //Getter functions for controls
@@ -31,5 +35,8 @@ class OI {
     }
     public double getRotationVelocity() {
         return rotationVelocity;
+    }
+    public boolean getToggleFieldOriented() {
+        return toggleFieldOriented;
     }
 }
