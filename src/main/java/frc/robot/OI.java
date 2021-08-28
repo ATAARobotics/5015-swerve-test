@@ -19,8 +19,12 @@ class OI {
         xVelocity = driveStick.getX(Hand.kLeft);
         yVelocity = driveStick.getY(Hand.kLeft);
         rotationVelocity = driveStick.getX(Hand.kRight);
-        if (xVelocity < 0.3 && xVelocity > -0.3) { xVelocity = 0; }
-        if (yVelocity < 0.3 && yVelocity > -0.3) { yVelocity = 0; }
+        
+        //Dead zones
+        if (Math.sqrt(Math.pow(xVelocity, 2) + Math.pow(yVelocity, 2)) < 0.3) {
+            xVelocity = 0;
+            yVelocity = 0;
+        }
         if (rotationVelocity < 0.3 && rotationVelocity > -0.3) { rotationVelocity = 0; }
 
         toggleFieldOriented = driveStick.getXButtonPressed();

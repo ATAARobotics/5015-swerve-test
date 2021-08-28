@@ -1,5 +1,7 @@
 package frc.robot;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 public class SwerveCommand {
 
     private double xVelocity;
@@ -26,6 +28,10 @@ public class SwerveCommand {
         //Get the wheelbase and track width from RobotMap. These are important because a long rectangular robot turns differently than a square robot
         double wheelbase = RobotMap.WHEELBASE;
         double trackWidth = RobotMap.TRACK_WIDTH;
+
+        SmartDashboard.putNumber("X Velocity", this.xVelocity);
+        SmartDashboard.putNumber("Y Velocity", this.yVelocity);
+        SmartDashboard.putNumber("Rotation Velocity", this.rotationVelocity);
 
         //Calculate wheel velocities and angles
         double a,b,c,d;

@@ -41,7 +41,7 @@ public class SwerveModule {
     private PIDController angleController = new PIDController(0.7, 0.0, 0.001);
 
     //Create a PID for controlling the velocity of the module
-    private PIDController velocityController = new PIDController(0.7, 0.0, 0.001);
+    private PIDController velocityController = new PIDController(0.07, 0.0, 0.001);
 
     /**
      * Creates a swerve module with the given hardware
@@ -80,9 +80,9 @@ public class SwerveModule {
      */
     public void periodic() {
         //Set the drive velocity, clamped to not exceed the maximum safe speed
-        double calculated = velocityController.calculate(getVelocity());
+        double calculated = velocityController.calculate(getVelocity()) + (driveVelocity * 0.5);
         double velocity = MathUtil.clamp(calculated, -RobotMap.MAX_SAFE_SPEED_OVERRIDE, RobotMap.MAX_SAFE_SPEED_OVERRIDE);
-        driveMotor.set(ControlMode.PercentOutput, velocity);
+        driveMotor.set(ControlMode.PercentOutput, velocity * inversionConstant);
 
         //Get the rotation velocity
         double rotationVelocity = -angleController.calculate(getAngle());
@@ -101,12 +101,15 @@ public class SwerveModule {
         }
 
         if (RobotMap.DETAILED_MODULE_INFORMATION) {
-            SmartDashboard.putNumber(name + " Encoder", driveMotor.getSelectedSensorPosition());
-            SmartDashboard.putNumber(name + " Expected", driveVelocity);
-            SmartDashboard.putNumber(name + " Calculated", calculated);
-            SmartDashboard.putNumber(name + " Error", velocityController.getPositionError());
-            SmartDashboard.putNumber(name + " Sent", velocity);
-            SmartDashboard.putNumber(name + " Speed", getVelocity());
+            SmartDashboard.putNumber(name + " Speed Setpoint", driveVelocity);
+            SmartDashboard.putNumber(name + " PID Output", calculated);
+            SmartDashboard.putNumber(name + " PID Error", velocityController.getPositionError());
+            SmartDashboard.putNumber(name + " Raw Speed", velocity);
+            SmartDashboard.putNumber(name + " Speed (m/s)", getVelocity());
+        }
+
+        if (RobotMap.DETAILED_ENCODER_INFORMATION) {
+            SmartDashboard.putNumber(name + " Raw Encoder Ticks", driveMotor.getSelectedSensorPosition());
         }
     }
 
@@ -117,8 +120,8 @@ public class SwerveModule {
      * @param velocity The velocity to drive the module. 
      */
     public void setDriveVelocity(double velocity) {
-        driveVelocity = velocity;
-        velocityController.setSetpoint(velocity * inversionConstant * reverseMultiplier);
+        driveVelocity = velocity * reverseMultiplier;
+        velocityController.setSetpoint(driveVelocity);
     }
 
     /**
@@ -172,7 +175,7 @@ public class SwerveModule {
         //Meters per second
         velocity /= RobotMap.DRIVE_ENCODER_TICKS_PER_METER;
 
-        return velocity;
+        return -velocity * inversionConstant;
     }
 
     /**

@@ -12,22 +12,21 @@ public class RobotMap {
     public static final double TRACK_WIDTH = 0.53;
 
     //Maximum linear speed is in meters/second
-    public static final double MAXIMUM_SPEED = 0.25;
+    public static final double MAXIMUM_SPEED = 0.4;
     //Used only for auto. Maximum acceleration is in meters/second/second
     public static final double MAXIMUM_ACCELERATION = 0.25;
 
     //Maximum rotational speed is in radians/second
-    public static final double MAXIMUM_ROTATIONAL_SPEED = Math.PI;
-    //Maximum rotational speed is in radians/second
-    public static final double MAXIMUM_ROTATIONAL_ACCELERATION = Math.PI / 2.0;
+    public static final double MAXIMUM_ROTATIONAL_SPEED = Math.PI / 2.0;
+    //Maximum rotational acceleration is in radians/second/second
+    public static final double MAXIMUM_ROTATIONAL_ACCELERATION = Math.PI / 4.0;
 
     public static final int FRONT_LEFT_DRIVE_MOTOR = 0;
     public static final int FRONT_RIGHT_DRIVE_MOTOR = 2;
     public static final int REAR_LEFT_DRIVE_MOTOR = 4;
     public static final int REAR_RIGHT_DRIVE_MOTOR = 6;
 
-    //public static final double DRIVE_ENCODER_TICKS_PER_METER = 1564.0;
-    public static final double DRIVE_ENCODER_TICKS_PER_METER = 8000.0;
+    public static final double DRIVE_ENCODER_TICKS_PER_METER = 1571.6;
 
     public static final int FRONT_LEFT_ROTATION_MOTOR = 1;
     public static final int FRONT_RIGHT_ROTATION_MOTOR = 3;
@@ -43,5 +42,9 @@ public class RobotMap {
     //Set this to true if you want to visualize the robot's movement during auto
     public static final boolean AUTO_PATH_LOGGING_ENABLED = true;
     //Set this to true if you want detailed SmartDashboard info on each module
-    public static final boolean DETAILED_MODULE_INFORMATION = false;
+    public static final boolean DETAILED_MODULE_INFORMATION = true;
+    //Set this to true if you want detailed SmartDashboard info on each module's encoder
+    public static final boolean DETAILED_ENCODER_INFORMATION = true;
+    //Set this to true if you want detailed SmartDashboard info on the joysticks
+    public static final boolean DETAILED_JOYSTICK_INFORMATION = true;
 }
