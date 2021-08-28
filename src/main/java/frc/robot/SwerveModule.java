@@ -100,12 +100,14 @@ public class SwerveModule {
             rotationMotor.set(ControlMode.PercentOutput, 0.0);
         }
 
-        SmartDashboard.putNumber(name + " Encoder", driveMotor.getSelectedSensorPosition());
-        SmartDashboard.putNumber(name + " Expected", driveVelocity);
-        SmartDashboard.putNumber(name + " Calculated", calculated);
-        SmartDashboard.putNumber(name + " Error", velocityController.getPositionError());
-        SmartDashboard.putNumber(name + " Sent", velocity);
-        SmartDashboard.putNumber(name + " Speed", getVelocity());
+        if (RobotMap.DETAILED_MODULE_INFORMATION) {
+            SmartDashboard.putNumber(name + " Encoder", driveMotor.getSelectedSensorPosition());
+            SmartDashboard.putNumber(name + " Expected", driveVelocity);
+            SmartDashboard.putNumber(name + " Calculated", calculated);
+            SmartDashboard.putNumber(name + " Error", velocityController.getPositionError());
+            SmartDashboard.putNumber(name + " Sent", velocity);
+            SmartDashboard.putNumber(name + " Speed", getVelocity());
+        }
     }
 
     /**

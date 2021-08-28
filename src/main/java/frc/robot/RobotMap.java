@@ -39,6 +39,9 @@ public class RobotMap {
     public static final int REAR_LEFT_ROTATION_ENCODER = 2;
     public static final int REAR_RIGHT_ROTATION_ENCODER = 3;
 
+    //LOGGING
     //Set this to true if you want to visualize the robot's movement during auto
     public static final boolean AUTO_PATH_LOGGING_ENABLED = true;
+    //Set this to true if you want detailed SmartDashboard info on each module
+    public static final boolean DETAILED_MODULE_INFORMATION = false;
 }
