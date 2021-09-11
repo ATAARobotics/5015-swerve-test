@@ -28,6 +28,9 @@ public class SwerveDrive {
     //The position that the robot started at
     private Pose2d initialPose;
 
+    //Safety speed override, this *shouldn't* ever be true
+    private boolean safetyDisable = false;
+
     /**
      * Set up the swerve drive
      * 
@@ -63,22 +66,33 @@ public class SwerveDrive {
      * This function should be run during every teleop and auto periodic
      */
     public void periodic(SwerveCommand command) {
-        SmartDashboard.putNumber("Gyro Value", gyro.getAngle());
+        if (!safetyDisable) {
+            SmartDashboard.putNumber("Gyro Value", gyro.getAngle());
 
-        //Execute functions on each swerve module
-        for (SwerveModule module : swerveModules) {
-            //Set the drive velocity in meters/second for the module
-            module.setDriveVelocity(command.getModuleVelocity(module.getId()));
+            //Execute functions on each swerve module
+            for (SwerveModule module : swerveModules) {
+                //Set the drive velocity in meters/second for the module
+                module.setDriveVelocity(command.getModuleVelocity(module.getId()));
 
-            //Set module angle target in radians from -Pi to Pi
-            module.setTargetAngle(command.getModuleAngle(module.getId()));
+                //Set module angle target in radians from -Pi to Pi
+                module.setTargetAngle(command.getModuleAngle(module.getId()));
 
-            //Run periodic tasks on the module (running motors)
-            module.periodic();
+                //Run periodic tasks on the module (running motors)
+                if (module.periodic()) {
+                    //Something has gone horribly wrong if this code is running, there are several checks to prevent it
+                    //Abort due to excessive speed
+                    safetyDisable = true;
+                    break;
+                }
+            }
+
+            //Update the current pose with the latest command, angle, and a timestamp
+            pose = odometry.update(command, gyro.getAngle(), Timer.getFPGATimestamp());
+        } else {
+            for (SwerveModule module : swerveModules) {
+                module.stop();
+            }
         }
-
-        //Update the current pose with the latest command, angle, and a timestamp
-        pose = odometry.update(command, gyro.getAngle(), Timer.getFPGATimestamp());
     }
 
     /**

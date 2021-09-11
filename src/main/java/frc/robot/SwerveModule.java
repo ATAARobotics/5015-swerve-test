@@ -43,6 +43,9 @@ public class SwerveModule {
     //Create a PID for controlling the velocity of the module
     private PIDController velocityController = new PIDController(0.07, 0.0, 0.001);
 
+    //Safety override
+    private boolean cancelAllMotion = false;
+
     /**
      * Creates a swerve module with the given hardware
      * 
@@ -78,11 +81,25 @@ public class SwerveModule {
     /**
      * This function should run every teleopPeriodic
      */
-    public void periodic() {
-        //Set the drive velocity, clamped to not exceed the maximum safe speed
-        double calculated = velocityController.calculate(getVelocity()) + (driveVelocity * 0.5);
-        double velocity = MathUtil.clamp(calculated, -RobotMap.MAX_SAFE_SPEED_OVERRIDE, RobotMap.MAX_SAFE_SPEED_OVERRIDE);
-        driveMotor.set(ControlMode.PercentOutput, velocity * inversionConstant);
+    public boolean periodic() {
+        //Set the drive velocity
+        double calculated = 0.0;
+        double velocity = 0.0;
+        if (driveVelocity != 0.0 && !cancelAllMotion) {
+            calculated = velocityController.calculate(getVelocity()) + (driveVelocity * 0.5);
+
+            velocity = MathUtil.clamp(calculated, -RobotMap.MAX_SAFE_SPEED_OVERRIDE, RobotMap.MAX_SAFE_SPEED_OVERRIDE);
+
+            //DO NOT MESS WITH THIS CODE
+            if (Math.abs(velocity) > RobotMap.MAX_SAFE_SPEED_OVERRIDE) {
+                //For some reason, the robot is above the max safe speed - disable the bot
+                return true;
+            } else {
+                driveMotor.set(ControlMode.PercentOutput, velocity * inversionConstant);
+            }
+        } else {
+            driveMotor.set(ControlMode.PercentOutput, 0);
+        }
 
         //Get the rotation velocity
         double rotationVelocity = -angleController.calculate(getAngle());
@@ -93,7 +110,7 @@ public class SwerveModule {
         }
 
         //If the robot isn't moving at all, don't rotate the module
-        if (driveVelocity != 0.0) {
+        if (driveVelocity != 0.0 && !cancelAllMotion) {
             //Set the rotation motor velocity based on the next value from the angle PID, clamped to not exceed the maximum speed
             rotationMotor.set(ControlMode.PercentOutput, rotationVelocity);
         } else {
@@ -111,6 +128,8 @@ public class SwerveModule {
         if (RobotMap.DETAILED_ENCODER_INFORMATION) {
             SmartDashboard.putNumber(name + " Raw Encoder Ticks", driveMotor.getSelectedSensorPosition());
         }
+
+        return false;
     }
 
     /**
@@ -197,6 +216,13 @@ public class SwerveModule {
      */
     public double getTargetAngle() {
         return angleController.getSetpoint();
+    }
+
+    /**
+     * Stops all motion on this module - safety override
+     */
+    public void stop() {
+        cancelAllMotion = true;
     }
 
     /**
