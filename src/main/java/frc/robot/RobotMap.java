@@ -12,7 +12,7 @@ public class RobotMap {
     public static final double TRACK_WIDTH = 0.53;
 
     //Maximum linear speed is in meters/second
-    public static final double MAXIMUM_SPEED = 2;
+    public static final double MAXIMUM_SPEED = 1.5;
     //Used only for auto. Maximum acceleration is in meters/second/second
     public static final double MAXIMUM_ACCELERATION = 0.25;
 

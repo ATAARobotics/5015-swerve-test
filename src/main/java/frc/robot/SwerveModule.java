@@ -90,7 +90,8 @@ public class SwerveModule {
 
             velocity = MathUtil.clamp(calculated, -RobotMap.MAX_SAFE_SPEED_OVERRIDE, RobotMap.MAX_SAFE_SPEED_OVERRIDE);
 
-            //DO NOT MESS WITH THIS CODE
+            //DO NOT MESS WITH THIS CODE please
+            //thanks
             if (Math.abs(velocity) > RobotMap.MAX_SAFE_SPEED_OVERRIDE) {
                 //For some reason, the robot is above the max safe speed - disable the bot
                 return true;

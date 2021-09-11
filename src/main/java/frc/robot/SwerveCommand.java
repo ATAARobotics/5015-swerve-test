@@ -55,6 +55,7 @@ public class SwerveCommand {
             Math.atan2(a, c)
         };
 
+        /*
         //Get the maximum wheel speed
         double maxSpeed = Math.max(Math.max(Math.abs(velocities[0]), Math.abs(velocities[1])), Math.max(Math.abs(velocities[2]), Math.abs(velocities[3])));
 
@@ -67,6 +68,7 @@ public class SwerveCommand {
                 velocities[i] *= RobotMap.MAXIMUM_SPEED;
             }
         }
+        */
     }
 
     /**
